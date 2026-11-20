@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Launch the interactive virtual mat on Linux or macOS.
 set -eu
 cd "$(dirname "$0")/.."
 export EXPO_PUBLIC_SESSION=virtual-bed

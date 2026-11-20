@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Record the local replay demonstration.
 set -eu
 cd "$(dirname "$0")/.."
 if [ "${1:-}" = "--running-emulators" ]; then

@@ -4,3 +4,5 @@ data/experiment-i/**/*.txt -text -diff
 *.docx binary
 *.mp4 binary
 *.png binary
+*.sh text eol=lf
+*.cmd text eol=crlf

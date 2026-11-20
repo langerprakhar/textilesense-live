@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Install the Linux or macOS development environment.
 set -eu
 cd "$(dirname "$0")/.."
 command -v ffmpeg >/dev/null || { echo 'Install FFmpeg before running setup.' >&2; exit 1; }

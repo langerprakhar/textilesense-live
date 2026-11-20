@@ -6,7 +6,14 @@ You control an imaginary person. A Python program calculates how strongly that p
 
 ## Try it on your laptop
 
-1. Unzip the project. Open a terminal **inside the folder containing README.md**. On macOS or Linux, install Python 3.12, Node 24 with npm, Java 21 and FFmpeg. Run the setup once, then launch the virtual bed.
+1. Open a terminal **inside the folder containing README.md**. On Windows, install 64-bit Python 3.12 with its `py` launcher, Node.js 24 with npm, and JDK 21. Open a new **Command Prompt** and run:
+
+   ```bat
+   scripts\setup.cmd
+   scripts\virtual-bed.cmd
+   ```
+
+   On macOS or Linux, install Python 3.12, Node 24 with npm, Java 21 and FFmpeg. Run the setup once, then launch the virtual bed.
 
    ```bash
    bash scripts/setup.sh
