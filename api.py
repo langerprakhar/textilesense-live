@@ -30,10 +30,18 @@ class Reading(BaseModel):
     rows: Literal[32]
     cols: Literal[64]
     values: Annotated[list[Value], Field(min_length=2048, max_length=2048)]
+    schema_version: Literal[1]
+
+
+class RecordedReading(Reading):
     source: Literal["recorded_replay", "recorded pressure mat"]
     recording: ID
     row: Annotated[int, Field(ge=0)]
-    schema_version: Literal[1]
+
+
+class VirtualReading(Reading):
+    source: Literal["virtual_pressure_mat"]
+    scenario: Literal["empty", "back", "left", "right"]
 
 
 def now():
@@ -56,7 +64,9 @@ HISTORY = 32
 
 
 @app.post("/frames")
-def ingest(r: Reading, authorization: str = Header(default="")):
+def ingest(
+    r: RecordedReading | VirtualReading, authorization: str = Header(default="")
+):
     if not hmac.compare_digest(authorization, "Bearer " + token):
         raise HTTPException(401)
     received = now()
@@ -67,9 +77,14 @@ def ingest(r: Reading, authorization: str = Header(default="")):
     doc = db.document(f"sessions/{r.session}")
     latest = doc.collection("state").document("latest")
     inference_start = time.perf_counter()
+    unloaded = isinstance(r, VirtualReading) and max(r.values) == 0
+    scores = []
     try:
-        with torch.inference_mode():
-            scores = net(inputs(np.array(r.values), cfg["cap"])).softmax(1)[0].tolist()
+        if not unloaded:
+            with torch.inference_mode():
+                scores = (
+                    net(inputs(np.array(r.values), cfg["cap"])).softmax(1)[0].tolist()
+                )
     except RuntimeError:
         logging.exception("Inference failed for %s/%d", r.session, r.seq)
         raise HTTPException(503, "Posture model unavailable")
@@ -103,8 +118,10 @@ def ingest(r: Reading, authorization: str = Header(default="")):
             inference_ms=inference_ms,
             frame_id=f"{r.session}/{r.seq}",
             scores=scores,
-            prediction=cfg["labels"][int(np.argmax(scores))],
-            labels=cfg["labels"],
+            prediction="Empty bed"
+            if unloaded
+            else cfg["labels"][int(np.argmax(scores))],
+            labels=[] if unloaded else cfg["labels"],
             model=cfg["version"],
             count=count,
             first_ms=old.get("first_ms", received),

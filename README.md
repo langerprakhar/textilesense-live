@@ -4,6 +4,10 @@ A Python service reads real pressure-mat recordings, predicts posture with a tra
 
 **Watch the demonstration** · [90-second MP4](evidence/live_test/demonstration.mp4) · [Read-aloud transcript PDF](Professor-transcript.pdf) · [Latest live test report](LIVE_TEST.md) · [Interview questions](QUESTIONS.md).
 
+## Control the virtual bed
+
+Run `bash scripts/setup.sh` once, then `bash scripts/virtual-bed.sh`. Open the terminal’s address, start the virtual sensor, and try lying down and turning. The operator screen opens the same frame in the official Firestore viewer. [Phase 2 guide and hosted setup](VIRTUAL_BED.md) · [Watch the virtual sensor](evidence/virtual_bed/virtual-bed.mp4).
+
 ## Make your own recording
 
 On Linux or macOS install Python 3.12, Node 24 with npm, Java 21 and FFmpeg. From the project directory run:

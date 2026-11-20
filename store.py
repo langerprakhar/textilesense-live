@@ -12,7 +12,7 @@ class EmulatorCredential(credentials.Base):
 
 def database():
     project = os.environ.get("TEXTILE_PROJECT", "demo-textilesense")
-    if project == "demo-textilesense":
+    if project in {"demo-textilesense", "demo-textilesense-bed"}:
         os.environ["FIRESTORE_EMULATOR_HOST"] = "127.0.0.1:" + str(
             int(os.getenv("TEXTILE_EMULATOR_PORT", "8080"))
         )

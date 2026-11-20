@@ -1,0 +1,78 @@
+{
+  "actions": [
+    {
+      "frame_id": "virtual-bed/5",
+      "source": "virtual_pressure_mat",
+      "scenario": "empty",
+      "prediction": "Empty bed",
+      "scores": [],
+      "captured_ms": 1795215141727,
+      "digest": "3d65049c24fe65834a69172ef48d2dab8dae3b41c3a585fc2bb0dd9c8e2f72f8",
+      "peak": 0,
+      "cells": 2048,
+      "cell_15_34": 0
+    },
+    {
+      "frame_id": "virtual-bed/11",
+      "source": "virtual_pressure_mat",
+      "scenario": "back",
+      "prediction": "Supine",
+      "scores": [
+        0.5917406678199768,
+        0.4048810601234436,
+        0.0033782976679503918
+      ],
+      "captured_ms": 1795215147731,
+      "digest": "a4cdd05cd7e3ebc478f69a106fc8231324428e288069ae6a571d09997dcd5c52",
+      "peak": 308,
+      "cells": 2048,
+      "cell_15_34": 264
+    },
+    {
+      "frame_id": "virtual-bed/18",
+      "source": "virtual_pressure_mat",
+      "scenario": "left",
+      "prediction": "Right",
+      "scores": [
+        0.13579502701759338,
+        0.8060208559036255,
+        0.05818411707878113
+      ],
+      "captured_ms": 1795215154736,
+      "digest": "a03c25eb33ce0155f816fec99fe3b521f2b33afddfa1c87ab01700ae459e5ed2",
+      "peak": 368,
+      "cells": 2048,
+      "cell_15_34": 185
+    },
+    {
+      "frame_id": "virtual-bed/24",
+      "source": "virtual_pressure_mat",
+      "scenario": "right",
+      "prediction": "Right",
+      "scores": [
+        0.05768377706408501,
+        0.9121008515357971,
+        0.030215289443731308
+      ],
+      "captured_ms": 1795215160741,
+      "digest": "c87a283a5ab8a04c9450a69f198e8d0b1925165d2eedfc762a1c6dc839e2a000",
+      "peak": 374,
+      "cells": 2048,
+      "cell_15_34": 120
+    },
+    {
+      "frame_id": "virtual-bed/30",
+      "source": "virtual_pressure_mat",
+      "scenario": "empty",
+      "prediction": "Empty bed",
+      "scores": [],
+      "captured_ms": 1795215166744,
+      "digest": "0848389924768350198756b67bb652107b4f78803e9da80223813afe00869d96",
+      "peak": 0,
+      "cells": 2048,
+      "cell_15_34": 0
+    }
+  ],
+  "pause_and_resume": true,
+  "firestore_ui_frame": "virtual-bed/34"
+}

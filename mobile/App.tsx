@@ -33,12 +33,12 @@ const app = initializeApp({
 });
 const auth = getAuth(app),
   db = getFirestore(app);
-if (projectId === "demo-textilesense") {
+if (["demo-textilesense", "demo-textilesense-bed"].includes(projectId)) {
   const host = process.env.EXPO_PUBLIC_EMULATOR_HOST || "127.0.0.1";
-  connectAuthEmulator(auth, "http://" + host + ":9099", {
+  connectAuthEmulator(auth, "http://" + host + ":" + (process.env.EXPO_PUBLIC_AUTH_PORT || "9099"), {
     disableWarnings: true,
   });
-  connectFirestoreEmulator(db, host, 8080);
+  connectFirestoreEmulator(db, host, Number(process.env.EXPO_PUBLIC_FIRESTORE_PORT || 8080));
 }
 type Frame = {
   seq: number;
@@ -58,8 +58,9 @@ type Frame = {
   scores: number[];
   source: string;
   model: string;
-  recording: string;
-  row: number;
+  scenario?: string;
+  recording?: string;
+  row?: number;
   resumed: boolean;
 };
 const colors = [
@@ -221,7 +222,7 @@ export default function App() {
             ))}
           </View>
           <Text style={s.status}>
-            {status} · {f?.source === "recorded_replay" ? "Recorded pressure mat" : f?.source || "Waiting for a frame"}
+            {status} · {f?.source === "virtual_pressure_mat" ? "Virtual pressure mat" : f?.source === "recorded_replay" ? "Recorded pressure mat" : f?.source || "Waiting for a frame"}
           </Text>
           {f && tab === "Live" && (
             <View style={s.card}>
@@ -256,7 +257,7 @@ export default function App() {
               {hist.map((h) => (
                 <Pressable key={h.frame_id} onPress={() => Select(h)}>
                   {line(
-                    "#" + h.seq + " · " + h.recording + " / " + h.row,
+                    "#" + h.seq + " · " + (h.scenario ? "Virtual · " + h.scenario : h.recording + " / " + h.row),
                     (h.resumed ? "Resumed · " : "") + h.prediction,
                   )}
                 </Pressable>
