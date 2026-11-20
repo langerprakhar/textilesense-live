@@ -1,0 +1,9 @@
+{
+  "frames": 60,
+  "capture_to_ui_verified_ms": {
+    "median": 195.8206787109375,
+    "p95": 343.1498901367186,
+    "max": 406.527099609375
+  },
+  "resume_to_ui_verified_ms": 222.7182049991825
+}

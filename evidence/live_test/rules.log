@@ -1,0 +1,3 @@
+WARNING: You are using the Auth Emulator, which is intended for local testing only.  Do not use with production credentials.
+[2026-11-20T22:34:48.579Z]  @firebase/firestore: Firestore (13.4.0): GrpcConnection RPC 'Write' stream 0x8f482b5e error. Code: 7 Message: 7 PERMISSION_DENIED: No matching allow statements
+PASS anonymous and unlisted reads denied, listed write denied, authorized listener observed Python sample 1795214088580

@@ -1,0 +1,17 @@
+node_modules/
+.venv/
+.cache/
+__pycache__/
+.pytest_cache/
+.expo/
+dist/
+data/source-license.html
+*.env
+.env*
+*debug.log*
+*.pem
+*service-account*.json
+hardware/esp32/settings.h
+
+.ruff_cache/
+recordings/

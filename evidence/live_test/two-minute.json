@@ -1,0 +1,31 @@
+{
+  "session": "two-minute-e8c9c308",
+  "sent": 120,
+  "received": 120,
+  "published": 120,
+  "listener_frames": 120,
+  "dropped": 0,
+  "rejected": 0,
+  "elapsed_s": 120.00010942799963,
+  "input_hz": 0.9999990881008346,
+  "inference_ms": {
+    "median": 1.1275075003140955,
+    "p95": 4.091485350454603,
+    "max": 53.20263999965391
+  },
+  "transaction_ms": {
+    "median": 28.48556050003026,
+    "p95": 131.67610375007823,
+    "max": 210.73359999991226
+  },
+  "api_cpu_percent": {
+    "median": 6.0,
+    "p95": 17.7,
+    "max": 98.0
+  },
+  "api_rss_mib": {
+    "median": 301.294921875,
+    "p95": 302.0994140625,
+    "max": 302.37890625
+  }
+}

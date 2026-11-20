@@ -1,0 +1,9 @@
+rules_version = '2';
+service cloud.firestore {
+ match /databases/{database}/documents {
+  match /sessions/{sid}/{group}/{id} {
+   allow read: if group in ['state','events'] && request.auth != null &&
+    request.auth.uid in get(/databases/$(database)/documents/sessions/$(sid)).data.readers;
+  }
+ }
+}

@@ -1,0 +1,11 @@
+{'source': 'software simulation', 'boot': '1bc3496f', 'seq': 0, 'adc': 0, 'uptime_ms': 0}
+{'source': 'software simulation', 'boot': '1bc3496f', 'seq': 1, 'adc': 300, 'uptime_ms': 1000}
+{'source': 'software simulation', 'boot': '1bc3496f', 'seq': 2, 'adc': 600, 'uptime_ms': 2000}
+{'source': 'software simulation', 'boot': '1bc3496f', 'seq': 3, 'adc': 900, 'uptime_ms': 3000}
+{'source': 'software simulation', 'boot': '1bc3496f', 'seq': 4, 'adc': 1200, 'uptime_ms': 4000}
+{'source': 'software simulation', 'boot': '1bc3496f', 'seq': 5, 'adc': 1500, 'uptime_ms': 5000}
+{'source': 'software simulation', 'boot': '1bc3496f', 'seq': 6, 'adc': 1800, 'uptime_ms': 6000}
+{'source': 'software simulation', 'boot': '1bc3496f', 'seq': 7, 'adc': 2100, 'uptime_ms': 7000}
+{'source': 'software simulation', 'boot': '1bc3496f', 'seq': 8, 'adc': 2400, 'uptime_ms': 8000}
+{'source': 'software simulation', 'boot': '1bc3496f', 'seq': 9, 'adc': 2700, 'uptime_ms': 9000}
+PASS Firestore latest matched final simulated ADC sample.

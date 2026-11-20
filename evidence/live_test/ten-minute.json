@@ -1,0 +1,31 @@
+{
+  "session": "ten-minute-45b0ab41",
+  "sent": 600,
+  "received": 600,
+  "published": 600,
+  "listener_frames": 600,
+  "dropped": 0,
+  "rejected": 0,
+  "elapsed_s": 600.0001576759996,
+  "input_hz": 0.9999997372067364,
+  "inference_ms": {
+    "median": 1.2003410001852899,
+    "p95": 9.547450199670493,
+    "max": 67.94180899942148
+  },
+  "transaction_ms": {
+    "median": 28.32372899956681,
+    "p95": 138.0779296993296,
+    "max": 444.0627249996396
+  },
+  "api_cpu_percent": {
+    "median": 4.25,
+    "p95": 12.604999999999995,
+    "max": 93.8
+  },
+  "api_rss_mib": {
+    "median": 304.185546875,
+    "p95": 304.8404296875,
+    "max": 305.91796875
+  }
+}

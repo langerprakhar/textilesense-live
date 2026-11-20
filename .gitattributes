@@ -1,0 +1,6 @@
+data/experiment-i/**/*.txt -text -diff
+*.pdf binary
+*.pt binary
+*.docx binary
+*.mp4 binary
+*.png binary

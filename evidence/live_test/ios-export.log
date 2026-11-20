@@ -1,0 +1,13 @@
+Starting Metro Bundler
+
+| (node:4214) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+iOS Bundled 10856ms index.ts (725 modules)
+
+› ios bundles (1):
+_expo/static/js/ios/index-644190858d2d3a1c6a3334ab8a26ea7d.hbc (3.4MB)
+
+› Files (1):
+metadata.json (142B)
+
+Exported: /tmp/textile-ios-final

@@ -1,0 +1,18 @@
+{
+  "frames": 36,
+  "elapsed_s": 39.191860417999976,
+  "rate_with_pause": 0.9185580785408691,
+  "backend_ms_p50_p95": [
+    22.0,
+    52.0
+  ],
+  "browser_observed_ms_p50_p95": [
+    153.98074850000398,
+    302.66904100000147
+  ],
+  "duplicates": 1,
+  "missing": 1,
+  "out_of_order": 1,
+  "history": 32,
+  "disconnect_reconnect": true
+}
