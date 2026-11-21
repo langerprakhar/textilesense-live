@@ -1,0 +1,223 @@
+{
+ "summary": {
+  "simulator": "11/11",
+  "model": "9/9",
+  "transport": "6/6"
+ },
+ "simulator": [
+  {
+   "step": "mat dragged onto bed",
+   "ok": true,
+   "mat": {
+    "x": 0.376,
+    "y": 0.05119998168945315,
+    "w": 0.768,
+    "l": 1.856,
+    "px": 0.024,
+    "py": 0.029,
+    "rows": 32,
+    "cols": 64
+   }
+  },
+  {
+   "step": "empty mat reads zero",
+   "ok": true,
+   "frame": "virtual-bed/904"
+  },
+  {
+   "step": "person on mat loads it",
+   "ok": true,
+   "frame": "virtual-bed/908",
+   "load_kg": 73.0,
+   "coverage": 0.9919
+  },
+  {
+   "step": "dragging left raises the centroid row continuously",
+   "ok": true,
+   "samples": [
+    [
+     910,
+     17.16,
+     0.72
+    ],
+    [
+     911,
+     18.83,
+     0.68
+    ],
+    [
+     912,
+     20.4,
+     0.64
+    ],
+    [
+     913,
+     21.81,
+     0.6
+    ],
+    [
+     914,
+     23.37,
+     0.56
+    ]
+   ]
+  },
+  {
+   "step": "toward the foot moves the centroid to higher columns",
+   "ok": true,
+   "head_col": 23.79,
+   "foot_col": 28.41
+  },
+  {
+   "step": "body partly off the mat",
+   "ok": true,
+   "coverage": 0.3021,
+   "measured_n": 228.6,
+   "truth_n": 222.3
+  },
+  {
+   "step": "turned 20 degrees",
+   "ok": true,
+   "theta": 20.0
+  },
+  {
+   "step": "roll to right keeps position",
+   "ok": true,
+   "roll": 1.0
+  },
+  {
+   "step": "roll to left keeps position",
+   "ok": true,
+   "roll": -1.0
+  },
+  {
+   "step": "roll to back keeps position",
+   "ok": true,
+   "roll": 0.0
+  },
+  {
+   "step": "get up empties the mat",
+   "ok": true,
+   "frame": "virtual-bed/942"
+  }
+ ],
+ "model": [
+  {
+   "step": "empty mat is not classified",
+   "ok": true,
+   "frame": "virtual-bed/904"
+  },
+  {
+   "step": "on back, centred",
+   "ok": true,
+   "frame": "virtual-bed/908",
+   "selected": "back",
+   "cnn": "Supine",
+   "scores": [
+    0.887,
+    0.112,
+    0.001
+   ],
+   "matches": true
+  },
+  {
+   "step": "after moving (outside training placement)",
+   "ok": true,
+   "frame": "virtual-bed/919",
+   "cnn": "Right",
+   "flags": [],
+   "coverage": 0.9413
+  },
+  {
+   "step": "partly off the mat",
+   "ok": true,
+   "frame": "virtual-bed/922",
+   "cnn": "Supine",
+   "flags": [
+    "load_at_mat_edge"
+   ]
+  },
+  {
+   "step": "turned 20 degrees on back",
+   "ok": true,
+   "frame": "virtual-bed/924",
+   "cnn": "Right"
+  },
+  {
+   "step": "rolled to right",
+   "ok": true,
+   "frame": "virtual-bed/930",
+   "selected": "right",
+   "cnn": "Right",
+   "top_score": 0.994,
+   "matches": true
+  },
+  {
+   "step": "rolled to left",
+   "ok": true,
+   "frame": "virtual-bed/935",
+   "selected": "left",
+   "cnn": "Left",
+   "top_score": 0.984,
+   "matches": true
+  },
+  {
+   "step": "rolled to back",
+   "ok": true,
+   "frame": "virtual-bed/940",
+   "selected": "back",
+   "cnn": "Supine",
+   "top_score": 0.899,
+   "matches": true
+  },
+  {
+   "step": "empty after getting up",
+   "ok": true,
+   "frame": "virtual-bed/942"
+  }
+ ],
+ "transport": [
+  {
+   "step": "phone stand-in shows the committed frame and reports it",
+   "ok": true,
+   "committed": "virtual-bed/945",
+   "receipt": "virtual-bed/945",
+   "physical": false,
+   "platform": "web"
+  },
+  {
+   "step": "pause stops frames and the phone shows Stale",
+   "ok": true,
+   "seq": 946
+  },
+  {
+   "step": "resume continues the sequence",
+   "ok": true,
+   "seq": 948,
+   "sequence": "next",
+   "missing": 6
+  },
+  {
+   "step": "first frame after the pause is flagged as resumed",
+   "ok": true,
+   "frame": "virtual-bed/947"
+  },
+  {
+   "step": "outage gap detected after recovery",
+   "ok": true,
+   "lost": [
+    949,
+    950,
+    951
+   ],
+   "sequence": "gap of 3",
+   "missing": 9
+  },
+  {
+   "step": "stored scores recompute from the stored grid",
+   "ok": true,
+   "checked": 32,
+   "mismatched": []
+  }
+ ]
+}

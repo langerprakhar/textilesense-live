@@ -10,6 +10,16 @@ import requests
 
 from store import database
 
+DEVICE_DOC = dict(
+    source="interactive_virtual_mat",
+    rows=32,
+    cols=64,
+    unit="mmHg (simulated)",
+    value_scale=0.1,
+    pitch_x_m=0.024,
+    pitch_y_m=0.029,
+)
+
 
 def provision_local(db):
     password = os.getenv("DEMO_PASSWORD") or secrets.token_urlsafe(10)
@@ -20,13 +30,14 @@ def provision_local(db):
     if not auth.ok and auth.json().get("error", {}).get("message") == "EMAIL_EXISTS":
         auth = requests.post(base + "signInWithPassword?key=demo", json=body, timeout=5)
     auth.raise_for_status()
-    db.document("devices/virtual-mat-01").set(
-        dict(source="virtual_pressure_mat", rows=32, cols=64, units="simulated counts")
-    )
+    db.document("devices/virtual-mat-01").set(DEVICE_DOC)
     db.document("sessions/virtual-bed").set(
         dict(device="virtual-mat-01", readers=[auth.json()["localId"]])
     )
-    return f"Dashboard viewer: {email}\nLocal demo password: {password}"
+    return (
+        "Browser copy of the phone app: http://127.0.0.1:8775/monitor"
+        f"\n  Viewer {email}, local password {password}"
+    )
 
 
 def main():
@@ -77,7 +88,9 @@ def main():
             else:
                 raise RuntimeError(f"{module} readiness timed out")
         print(
-            f"Open http://127.0.0.1:8775\n{message}\nCtrl+C ends the demo.", flush=True
+            "\n  Virtual bed console: http://127.0.0.1:8775"
+            f"\n  {message}\n  Press Ctrl+C here to stop.\n",
+            flush=True,
         )
         while all(p.poll() is None for p in servers):
             time.sleep(0.5)

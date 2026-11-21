@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Virtual bed · TextileSense Live</title>
+<link rel="stylesheet" href="/static/console.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">TextileSense Live <span>Virtual pressure-mat bed</span></div>
+  <nav aria-label="Views">
+    <a href="/" aria-current="page">Bed and live monitor</a>
+    <a href="/diagnostics">Diagnostics</a>
+  </nav>
+  <span id="streamPill" class="pill">Connecting</span>
+  <div class="where" id="where"></div>
+</header>
+
+<main class="console">
+  <aside class="rail" aria-label="Controls">
+    <h2>Toolbox</h2>
+    <div class="tools" id="tools">
+      <div class="tool" id="toolMat" data-tool="mat" role="button" tabindex="0" aria-label="Pressure mat. Drag onto the bed, or press Enter to place it in the middle.">
+        <svg viewBox="0 0 40 70" aria-hidden="true">
+          <rect x="2" y="2" width="36" height="66" rx="3" fill="#333d61"/>
+          <path d="M8 2v66M14 2v66M20 2v66M26 2v66M32 2v66M2 10h36M2 18h36M2 26h36M2 34h36M2 42h36M2 50h36M2 58h36" stroke="#5c6890" stroke-width=".8"/>
+        </svg>
+        Pressure mat<small>32 × 64 sensors</small>
+      </div>
+      <div class="tool" id="toolPerson" data-tool="person" role="button" tabindex="0" aria-label="Person. Drag onto the bed, or press Enter to place them on the mat.">
+        <svg viewBox="0 0 40 70" aria-hidden="true">
+          <g stroke="#1b2550" stroke-linecap="round" fill="none">
+            <circle cx="20" cy="8" r="5.5" stroke-width="2.4"/>
+            <path d="M20 16v22" stroke-width="10"/>
+            <path d="M12 17l-3 18M28 17l3 18" stroke-width="4"/>
+            <path d="M16 40l-1 26M24 40l1 26" stroke-width="5"/>
+          </g>
+        </svg>
+        Person<small>75 kg, 1.75 m</small>
+      </div>
+    </div>
+    <p class="hint" id="toolHint">Drag the mat onto the bed first, then the person.</p>
+
+    <h2>Person</h2>
+    <div class="seg" role="group" aria-label="Posture" id="posture">
+      <button data-posture="back" aria-pressed="true">On back</button>
+      <button data-posture="left" aria-pressed="false">Left side</button>
+      <button data-posture="right" aria-pressed="false">Right side</button>
+    </div>
+    <p class="hint">Rolls in place. Drag the body to move across the bed.</p>
+    <div class="row">
+      <label for="turn">Turn</label>
+      <output id="turnOut" for="turn">0°</output>
+    </div>
+    <input type="range" id="turn" min="-180" max="180" step="1" value="0" aria-label="Turn the person on the bed, in degrees">
+    <div class="grid2">
+      <button class="btn" id="centre">Centre on mat</button>
+      <button class="btn" id="getUp">Get up</button>
+    </div>
+
+    <h2>Transmission</h2>
+    <button class="btn primary wide" id="transmit">Start transmitting</button>
+    <div class="txstate" id="txState">One complete frame per second, sent to Python.</div>
+    <div class="note" id="txNote"></div>
+    <div class="alert" id="txError" role="alert"></div>
+
+    <h2>Keyboard</h2>
+    <ul class="keys">
+      <li><kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd> move 1 cm, with <kbd>Shift</kbd> 5 cm</li>
+      <li><kbd>[</kbd> <kbd>]</kbd> turn 5°</li>
+      <li><kbd>B</kbd> back, <kbd>L</kbd> left side, <kbd>R</kbd> right side</li>
+      <li><kbd>U</kbd> get up, <kbd>Space</kbd> start or pause</li>
+    </ul>
+  </aside>
+
+  <section class="stage" aria-label="Bed">
+    <div class="stage-head">
+      <h1>Bed, seen from above</h1>
+      <p>Head of the bed at the top. Queen mattress 152 × 203 cm.</p>
+    </div>
+    <div class="bedwrap">
+      <svg id="bed" viewBox="-12 -30 176 246" role="img" aria-label="Top-down bed with pressure mat and person">
+        <defs>
+          <pattern id="cells" width="2.4" height="2.9" patternUnits="userSpaceOnUse">
+            <path d="M2.4 0V2.9H0" fill="none" stroke="#6a77a3" stroke-opacity=".38" stroke-width=".12"/>
+          </pattern>
+          <pattern id="major" width="19.2" height="23.2" patternUnits="userSpaceOnUse">
+            <path d="M19.2 0V23.2H0" fill="none" stroke="#8d9bc8" stroke-opacity=".55" stroke-width=".22"/>
+          </pattern>
+          <pattern id="quilt" width="19" height="19" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <path d="M0 0H19M0 0V19" stroke="#e3e7ee" stroke-width=".5"/>
+          </pattern>
+          <clipPath id="matClip"><rect x="0" y="0" width="76.8" height="185.6"/></clipPath>
+        </defs>
+        <!-- Bed frame and mattress -->
+        <rect x="-9" y="-27" width="170" height="16" rx="4" fill="#c9ced9"/>
+        <rect x="-6" y="-6" width="164" height="215" rx="7" fill="#dfe3ea"/>
+        <rect x="0" y="0" width="152" height="203" rx="4" fill="#f8f9fb" stroke="#c4cad6" stroke-width=".5"/>
+        <rect x="0" y="0" width="152" height="203" rx="4" fill="url(#quilt)"/>
+        <text x="-4" y="-17.5" font-size="4.6" fill="#4f5a78" font-weight="700">Head of bed</text>
+        <text x="76" y="214" text-anchor="middle" font-size="4.4" fill="#4f5a78">Foot of bed</text>
+        <!-- True contact that falls outside the sensing area -->
+        <image id="offmat" x="0" y="0" width="153" height="204" preserveAspectRatio="none" style="image-rendering:pixelated" opacity=".9"/>
+        <g id="matLayer"></g>
+        <g id="personLayer"></g>
+      </svg>
+      <div class="empty-hint" id="emptyHint">Drag the pressure mat from the toolbox onto the bed.</div>
+    </div>
+    <div class="readout" aria-live="off">
+      <div>Peak on mat<b id="rPeak">–</b></div>
+      <div>Load on mat<b id="rLoad">–</b></div>
+      <div>Contact area<b id="rArea">–</b></div>
+      <div title="Share of the person's weight that presses on the sensing area. Simulator truth, not sent to the model.">Body load on mat<b id="rCov">–</b></div>
+      <div class="legend">
+        Simulated pressure, mmHg
+        <div class="bar" id="legendBar"></div>
+        <div class="ticks"><span>1</span><span>10</span><span>25</span><span>50</span><span>75</span><span>100+</span></div>
+      </div>
+    </div>
+  </section>
+
+  <aside class="monitor" aria-label="Live monitor">
+    <h2>Last frame committed to Firestore</h2>
+    <div class="frame-card">
+      <div class="frame-map"><canvas id="frameMap" width="32" height="64" aria-label="Heatmap of the committed frame"></canvas></div>
+      <div>
+        <p class="frame-id">Frame <b id="frameId">none yet</b></p>
+        <p class="small" id="frameTime">Start transmitting to send the first frame.</p>
+        <div class="estimate none" id="estimate">No prediction</div>
+        <div class="small">CNN estimate from this frame’s 2,048 values</div>
+        <div class="bars" id="bars"></div>
+      </div>
+    </div>
+    <dl class="compare">
+      <div><dt>Posture you selected</dt><dd id="selected">–</dd></div>
+      <div><dt>Model compared with your setting</dt><dd id="agreement">–</dd></div>
+      <div><dt>Body load on the sensing area</dt><dd id="coverage">–</dd></div>
+    </dl>
+    <div class="envelope" id="envelope">Place the mat and the person to begin.</div>
+
+    <h2>Signal chain for this frame</h2>
+    <ol class="chain" id="chain">
+      <li data-stage="sensor"><span class="name">Virtual sensor</span><span class="what">Waiting</span></li>
+      <li data-stage="python"><span class="name">Python validation</span><span class="what">Waiting</span></li>
+      <li data-stage="cnn"><span class="name">CNN inference</span><span class="what">Waiting</span></li>
+      <li data-stage="firestore"><span class="name">Firestore commit</span><span class="what">Waiting</span></li>
+      <li data-stage="phone"><span class="name">Phone display</span><span class="what">No phone has reported yet</span></li>
+    </ol>
+    <p class="foot">Pressure is simulated. Your posture setting drives the body model only; the CNN sees just the grid. <a href="/diagnostics">Open diagnostics</a> for the stored document, sequence counters and model limits.</p>
+  </aside>
+</main>
+<script src="/static/heat.js"></script>
+<script src="/static/console.js"></script>
+</body>
+</html>

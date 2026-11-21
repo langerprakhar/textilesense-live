@@ -1,9 +1,27 @@
 rules_version = '2';
 service cloud.firestore {
  match /databases/{database}/documents {
-  match /sessions/{sid}/{group}/{id} {
-   allow read: if group in ['state','events'] && request.auth != null &&
+  function isReader(sid) {
+   return request.auth != null &&
     request.auth.uid in get(/databases/$(database)/documents/sessions/$(sid)).data.readers;
+  }
+
+  // Frames and history are written only by the Python service (Admin SDK).
+  match /sessions/{sid}/{group}/{id} {
+   allow read: if group in ['state', 'events', 'viewers'] && isReader(sid);
+  }
+
+  // A signed-in viewer may report which frame its screen is showing. It can
+  // write only its own receipt, only these fields, stamped with server time.
+  match /sessions/{sid}/viewers/{uid} {
+   allow create, update: if isReader(sid) && request.auth.uid == uid &&
+    request.resource.data.keys().hasOnly(
+     ['frame_id', 'seq', 'digest', 'rendered_at', 'platform', 'os_version',
+      'device', 'physical_device', 'app', 'prediction']) &&
+    request.resource.data.frame_id is string &&
+    request.resource.data.frame_id.size() < 100 &&
+    request.resource.data.seq is int &&
+    request.resource.data.rendered_at == request.time;
   }
  }
 }

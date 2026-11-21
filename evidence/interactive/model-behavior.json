@@ -1,0 +1,980 @@
+{
+ "summary": "Centred and aligned, the CNN labels all three simulated postures correctly (On back 89%, Left side 98%, Right side 99%). It was trained without shift or rotation augmentation, so moving the body about 10 cm sideways, turning it 10\u201320\u00b0, or pushing part of it off the mat can change its answer. Shifting real recordings shows the same sensitivity, so this is a property of the model, not of the simulator. Green: matches the simulated posture (for real frames, at least 90% of frames correct).",
+ "groups": [
+  {
+   "title": "On back: moved across the bed (+ is toward the bed's right side)",
+   "cases": [
+    {
+     "label": "-30 cm",
+     "posture": "back",
+     "prediction": "Right",
+     "score": 0.953,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.8199
+    },
+    {
+     "label": "-20 cm",
+     "posture": "back",
+     "prediction": "Right",
+     "score": 0.998,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.9443
+    },
+    {
+     "label": "-10 cm",
+     "posture": "back",
+     "prediction": "Right",
+     "score": 0.957,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.9915
+    },
+    {
+     "label": "-6 cm",
+     "posture": "back",
+     "prediction": "Right",
+     "score": 0.674,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.9915
+    },
+    {
+     "label": "-3 cm",
+     "posture": "back",
+     "prediction": "Supine",
+     "score": 0.818,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9903
+    },
+    {
+     "label": "+0 cm",
+     "posture": "back",
+     "prediction": "Supine",
+     "score": 0.887,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9906
+    },
+    {
+     "label": "+3 cm",
+     "posture": "back",
+     "prediction": "Supine",
+     "score": 0.849,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9902
+    },
+    {
+     "label": "+6 cm",
+     "posture": "back",
+     "prediction": "Supine",
+     "score": 0.886,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9915
+    },
+    {
+     "label": "+10 cm",
+     "posture": "back",
+     "prediction": "Supine",
+     "score": 0.922,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9915
+    },
+    {
+     "label": "+20 cm",
+     "posture": "back",
+     "prediction": "Supine",
+     "score": 0.914,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9443
+    },
+    {
+     "label": "+30 cm",
+     "posture": "back",
+     "prediction": "Supine",
+     "score": 0.988,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.8199
+    }
+   ]
+  },
+  {
+   "title": "Left side: moved across the bed (+ is toward the bed's right side)",
+   "cases": [
+    {
+     "label": "-30 cm",
+     "posture": "left",
+     "prediction": "Right",
+     "score": 0.951,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.9938
+    },
+    {
+     "label": "-20 cm",
+     "posture": "left",
+     "prediction": "Right",
+     "score": 0.848,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.9866
+    },
+    {
+     "label": "-10 cm",
+     "posture": "left",
+     "prediction": "Left",
+     "score": 0.998,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.994
+    },
+    {
+     "label": "-6 cm",
+     "posture": "left",
+     "prediction": "Left",
+     "score": 0.999,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.994
+    },
+    {
+     "label": "-3 cm",
+     "posture": "left",
+     "prediction": "Left",
+     "score": 0.996,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9921
+    },
+    {
+     "label": "+0 cm",
+     "posture": "left",
+     "prediction": "Left",
+     "score": 0.985,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9866
+    },
+    {
+     "label": "+3 cm",
+     "posture": "left",
+     "prediction": "Left",
+     "score": 0.91,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9903
+    },
+    {
+     "label": "+6 cm",
+     "posture": "left",
+     "prediction": "Left",
+     "score": 0.602,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.994
+    },
+    {
+     "label": "+10 cm",
+     "posture": "left",
+     "prediction": "Supine",
+     "score": 0.719,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.994
+    },
+    {
+     "label": "+20 cm",
+     "posture": "left",
+     "prediction": "Supine",
+     "score": 0.855,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.8585
+    },
+    {
+     "label": "+30 cm",
+     "posture": "left",
+     "prediction": "Supine",
+     "score": 0.983,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.6687
+    }
+   ]
+  },
+  {
+   "title": "Right side: moved across the bed (+ is toward the bed's right side)",
+   "cases": [
+    {
+     "label": "-30 cm",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.952,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.6669
+    },
+    {
+     "label": "-20 cm",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.513,
+     "agreement": 0.6,
+     "correct": true,
+     "coverage": 0.8569
+    },
+    {
+     "label": "-10 cm",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.798,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9922
+    },
+    {
+     "label": "-6 cm",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.967,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9922
+    },
+    {
+     "label": "-3 cm",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.987,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9886
+    },
+    {
+     "label": "+0 cm",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.994,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.985
+    },
+    {
+     "label": "+3 cm",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.998,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9904
+    },
+    {
+     "label": "+6 cm",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.999,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9922
+    },
+    {
+     "label": "+10 cm",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.998,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9922
+    },
+    {
+     "label": "+20 cm",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.565,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9875
+    },
+    {
+     "label": "+30 cm",
+     "posture": "right",
+     "prediction": "Supine",
+     "score": 0.991,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.992
+    }
+   ]
+  },
+  {
+   "title": "On back: toward head (\u2212) or foot (+), and turned",
+   "cases": [
+    {
+     "label": "-10 cm",
+     "posture": "back",
+     "prediction": "Right",
+     "score": 0.783,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.9819
+    },
+    {
+     "label": "-5 cm",
+     "posture": "back",
+     "prediction": "Supine",
+     "score": 0.657,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9908
+    },
+    {
+     "label": "+0 cm",
+     "posture": "back",
+     "prediction": "Supine",
+     "score": 0.887,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9906
+    },
+    {
+     "label": "+5 cm",
+     "posture": "back",
+     "prediction": "Supine",
+     "score": 0.941,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.988
+    },
+    {
+     "label": "+10 cm",
+     "posture": "back",
+     "prediction": "Supine",
+     "score": 0.966,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.964
+    },
+    {
+     "label": "turned -20\u00b0",
+     "posture": "back",
+     "prediction": "Right",
+     "score": 0.791,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.9688
+    },
+    {
+     "label": "turned -10\u00b0",
+     "posture": "back",
+     "prediction": "Right",
+     "score": 0.819,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.9909
+    },
+    {
+     "label": "turned -5\u00b0",
+     "posture": "back",
+     "prediction": "Supine",
+     "score": 0.551,
+     "agreement": 0.6,
+     "correct": true,
+     "coverage": 0.9909
+    },
+    {
+     "label": "turned +5\u00b0",
+     "posture": "back",
+     "prediction": "Supine",
+     "score": 0.727,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9909
+    },
+    {
+     "label": "turned +10\u00b0",
+     "posture": "back",
+     "prediction": "Right",
+     "score": 0.611,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.9909
+    },
+    {
+     "label": "turned +20\u00b0",
+     "posture": "back",
+     "prediction": "Right",
+     "score": 0.898,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.9687
+    },
+    {
+     "label": "turned +45\u00b0",
+     "posture": "back",
+     "prediction": "Right",
+     "score": 0.759,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.6695
+    },
+    {
+     "label": "turned +90\u00b0",
+     "posture": "back",
+     "prediction": "Supine",
+     "score": 0.986,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.4854
+    },
+    {
+     "label": "turned +180\u00b0",
+     "posture": "back",
+     "prediction": "Right",
+     "score": 0.913,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.9755
+    }
+   ]
+  },
+  {
+   "title": "Left side: toward head (\u2212) or foot (+), and turned",
+   "cases": [
+    {
+     "label": "-10 cm",
+     "posture": "left",
+     "prediction": "Left",
+     "score": 0.999,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.979
+    },
+    {
+     "label": "-5 cm",
+     "posture": "left",
+     "prediction": "Left",
+     "score": 0.996,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9862
+    },
+    {
+     "label": "+0 cm",
+     "posture": "left",
+     "prediction": "Left",
+     "score": 0.985,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9866
+    },
+    {
+     "label": "+5 cm",
+     "posture": "left",
+     "prediction": "Left",
+     "score": 0.941,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9873
+    },
+    {
+     "label": "+10 cm",
+     "posture": "left",
+     "prediction": "Left",
+     "score": 0.78,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9814
+    },
+    {
+     "label": "turned -20\u00b0",
+     "posture": "left",
+     "prediction": "Left",
+     "score": 0.961,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.931
+    },
+    {
+     "label": "turned -10\u00b0",
+     "posture": "left",
+     "prediction": "Left",
+     "score": 1.0,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9919
+    },
+    {
+     "label": "turned -5\u00b0",
+     "posture": "left",
+     "prediction": "Left",
+     "score": 0.998,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9919
+    },
+    {
+     "label": "turned +5\u00b0",
+     "posture": "left",
+     "prediction": "Left",
+     "score": 0.946,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9904
+    },
+    {
+     "label": "turned +10\u00b0",
+     "posture": "left",
+     "prediction": "Left",
+     "score": 0.954,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9912
+    },
+    {
+     "label": "turned +20\u00b0",
+     "posture": "left",
+     "prediction": "Left",
+     "score": 0.851,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9897
+    },
+    {
+     "label": "turned +45\u00b0",
+     "posture": "left",
+     "prediction": "Right",
+     "score": 0.984,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.6667
+    },
+    {
+     "label": "turned +90\u00b0",
+     "posture": "left",
+     "prediction": "Right",
+     "score": 0.658,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.505
+    },
+    {
+     "label": "turned +180\u00b0",
+     "posture": "left",
+     "prediction": "Right",
+     "score": 0.999,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.9865
+    }
+   ]
+  },
+  {
+   "title": "Right side: toward head (\u2212) or foot (+), and turned",
+   "cases": [
+    {
+     "label": "-10 cm",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 1.0,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9774
+    },
+    {
+     "label": "-5 cm",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.998,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9846
+    },
+    {
+     "label": "+0 cm",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.994,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.985
+    },
+    {
+     "label": "+5 cm",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.981,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9857
+    },
+    {
+     "label": "+10 cm",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.938,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9798
+    },
+    {
+     "label": "turned -20\u00b0",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.996,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.988
+    },
+    {
+     "label": "turned -10\u00b0",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.998,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9895
+    },
+    {
+     "label": "turned -5\u00b0",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.994,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9887
+    },
+    {
+     "label": "turned +5\u00b0",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.999,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9902
+    },
+    {
+     "label": "turned +10\u00b0",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 1.0,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9901
+    },
+    {
+     "label": "turned +20\u00b0",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.992,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9293
+    },
+    {
+     "label": "turned +45\u00b0",
+     "posture": "right",
+     "prediction": "Supine",
+     "score": 0.952,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.6269
+    },
+    {
+     "label": "turned +90\u00b0",
+     "posture": "right",
+     "prediction": "Supine",
+     "score": 0.994,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.502
+    },
+    {
+     "label": "turned +180\u00b0",
+     "posture": "right",
+     "prediction": "Left",
+     "score": 0.825,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.9849
+    }
+   ]
+  },
+  {
+   "title": "Rolling from back to right side (fraction of the roll completed)",
+   "cases": [
+    {
+     "label": "roll 0.0",
+     "posture": "right",
+     "prediction": "Supine",
+     "score": 0.887,
+     "agreement": 0.0,
+     "correct": true,
+     "coverage": 0.9906
+    },
+    {
+     "label": "roll 0.2",
+     "posture": "right",
+     "prediction": "Supine",
+     "score": 0.775,
+     "agreement": 0.0,
+     "correct": true,
+     "coverage": 0.99
+    },
+    {
+     "label": "roll 0.4",
+     "posture": "right",
+     "prediction": "Supine",
+     "score": 0.539,
+     "agreement": 0.2,
+     "correct": true,
+     "coverage": 0.9886
+    },
+    {
+     "label": "roll 0.5",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.647,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9878
+    },
+    {
+     "label": "roll 0.6",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.844,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9869
+    },
+    {
+     "label": "roll 0.8",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.994,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9856
+    },
+    {
+     "label": "roll 1.0",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.994,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.985
+    }
+   ]
+  },
+  {
+   "title": "Real held-out recordings (subjects 11\u201313) shifted sideways on the mat",
+   "cases": [
+    {
+     "label": "On back +19 cm",
+     "prediction": "Supine",
+     "score": 1.0,
+     "correct": true
+    },
+    {
+     "label": "On back +10 cm",
+     "prediction": "Supine",
+     "score": 1.0,
+     "correct": true
+    },
+    {
+     "label": "On back +0 cm",
+     "prediction": "Supine",
+     "score": 1.0,
+     "correct": true
+    },
+    {
+     "label": "On back -10 cm",
+     "prediction": "Supine",
+     "score": 0.769,
+     "correct": false
+    },
+    {
+     "label": "On back -19 cm",
+     "prediction": null,
+     "score": 0.0,
+     "correct": false
+    },
+    {
+     "label": "Right side +19 cm",
+     "prediction": null,
+     "score": 0.261,
+     "correct": false
+    },
+    {
+     "label": "Right side +10 cm",
+     "prediction": "Right",
+     "score": 1.0,
+     "correct": true
+    },
+    {
+     "label": "Right side +0 cm",
+     "prediction": "Right",
+     "score": 1.0,
+     "correct": true
+    },
+    {
+     "label": "Right side -10 cm",
+     "prediction": "Right",
+     "score": 1.0,
+     "correct": true
+    },
+    {
+     "label": "Right side -19 cm",
+     "prediction": "Right",
+     "score": 1.0,
+     "correct": true
+    },
+    {
+     "label": "Left side +19 cm",
+     "prediction": null,
+     "score": 0.138,
+     "correct": false
+    },
+    {
+     "label": "Left side +10 cm",
+     "prediction": "Left",
+     "score": 1.0,
+     "correct": true
+    },
+    {
+     "label": "Left side +0 cm",
+     "prediction": "Left",
+     "score": 1.0,
+     "correct": true
+    },
+    {
+     "label": "Left side -10 cm",
+     "prediction": "Left",
+     "score": 1.0,
+     "correct": true
+    },
+    {
+     "label": "Left side -19 cm",
+     "prediction": null,
+     "score": 0.0,
+     "correct": false
+    }
+   ]
+  }
+ ],
+ "real_shift": [
+  {
+   "posture": "back",
+   "shift_rows": -8,
+   "shift_cm": 19.2,
+   "frames": 26,
+   "accuracy": 1.0
+  },
+  {
+   "posture": "back",
+   "shift_rows": -4,
+   "shift_cm": 9.6,
+   "frames": 26,
+   "accuracy": 1.0
+  },
+  {
+   "posture": "back",
+   "shift_rows": 0,
+   "shift_cm": 0.0,
+   "frames": 26,
+   "accuracy": 1.0
+  },
+  {
+   "posture": "back",
+   "shift_rows": 4,
+   "shift_cm": -9.6,
+   "frames": 26,
+   "accuracy": 0.769
+  },
+  {
+   "posture": "back",
+   "shift_rows": 8,
+   "shift_cm": -19.2,
+   "frames": 26,
+   "accuracy": 0.0
+  },
+  {
+   "posture": "right",
+   "shift_rows": -8,
+   "shift_cm": 19.2,
+   "frames": 23,
+   "accuracy": 0.261
+  },
+  {
+   "posture": "right",
+   "shift_rows": -4,
+   "shift_cm": 9.6,
+   "frames": 23,
+   "accuracy": 1.0
+  },
+  {
+   "posture": "right",
+   "shift_rows": 0,
+   "shift_cm": 0.0,
+   "frames": 23,
+   "accuracy": 1.0
+  },
+  {
+   "posture": "right",
+   "shift_rows": 4,
+   "shift_cm": -9.6,
+   "frames": 23,
+   "accuracy": 1.0
+  },
+  {
+   "posture": "right",
+   "shift_rows": 8,
+   "shift_cm": -19.2,
+   "frames": 23,
+   "accuracy": 1.0
+  },
+  {
+   "posture": "left",
+   "shift_rows": -8,
+   "shift_cm": 19.2,
+   "frames": 29,
+   "accuracy": 0.138
+  },
+  {
+   "posture": "left",
+   "shift_rows": -4,
+   "shift_cm": 9.6,
+   "frames": 29,
+   "accuracy": 1.0
+  },
+  {
+   "posture": "left",
+   "shift_rows": 0,
+   "shift_cm": 0.0,
+   "frames": 29,
+   "accuracy": 1.0
+  },
+  {
+   "posture": "left",
+   "shift_rows": 4,
+   "shift_cm": -9.6,
+   "frames": 29,
+   "accuracy": 1.0
+  },
+  {
+   "posture": "left",
+   "shift_rows": 8,
+   "shift_cm": -19.2,
+   "frames": 29,
+   "accuracy": 0.0
+  }
+ ]
+}

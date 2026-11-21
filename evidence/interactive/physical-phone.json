@@ -1,0 +1,86 @@
+[
+ {
+  "step": "on back, centred",
+  "committed": "virtual-bed/27",
+  "cnn": "Supine",
+  "peak": 60.6,
+  "centroid_row": 15.5,
+  "phone_frame": "virtual-bed/27",
+  "phone_pred": "Supine",
+  "phone_device": "iPhone 17 Pro Max",
+  "behind": 0,
+  "commit_to_phone_ms": 1504
+ },
+ {
+  "step": "moved 10 cm toward bed's left",
+  "committed": "virtual-bed/32",
+  "cnn": "Right",
+  "peak": 62.4,
+  "centroid_row": 19.65,
+  "phone_frame": "virtual-bed/31",
+  "phone_pred": "Right",
+  "phone_device": "iPhone 17 Pro Max",
+  "behind": 1,
+  "commit_to_phone_ms": null
+ },
+ {
+  "step": "centred again",
+  "committed": "virtual-bed/36",
+  "cnn": "Supine",
+  "peak": 63.0,
+  "centroid_row": 15.51,
+  "phone_frame": "virtual-bed/36",
+  "phone_pred": "Supine",
+  "phone_device": "iPhone 17 Pro Max",
+  "behind": 0,
+  "commit_to_phone_ms": 1491
+ },
+ {
+  "step": "rolled to right side",
+  "committed": "virtual-bed/41",
+  "cnn": "Right",
+  "peak": 88.5,
+  "centroid_row": 17.7,
+  "phone_frame": "virtual-bed/40",
+  "phone_pred": "Right",
+  "phone_device": "iPhone 17 Pro Max",
+  "behind": 1,
+  "commit_to_phone_ms": null
+ },
+ {
+  "step": "rolled to left side",
+  "committed": "virtual-bed/45",
+  "cnn": "Left",
+  "peak": 87.6,
+  "centroid_row": 13.3,
+  "phone_frame": "virtual-bed/45",
+  "phone_pred": "Left",
+  "phone_device": "iPhone 17 Pro Max",
+  "behind": 0,
+  "commit_to_phone_ms": 1631
+ },
+ {
+  "step": "got up",
+  "committed": "virtual-bed/50",
+  "cnn": null,
+  "peak": 0.0,
+  "centroid_row": null,
+  "phone_frame": "virtual-bed/49",
+  "phone_pred": null,
+  "phone_device": "iPhone 17 Pro Max",
+  "behind": 1,
+  "commit_to_phone_ms": null
+ },
+ {
+  "step": "back on mat",
+  "committed": "virtual-bed/54",
+  "cnn": "Supine",
+  "peak": 60.7,
+  "centroid_row": 15.49,
+  "phone_frame": "virtual-bed/54",
+  "phone_pred": "Supine",
+  "phone_device": "iPhone 17 Pro Max",
+  "behind": 0,
+  "commit_to_phone_ms": 1554
+ }
+]

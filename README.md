@@ -1,19 +1,40 @@
 # TextileSense Live
 
-A Python service reads real pressure-mat recordings, predicts posture with a trained CNN, and publishes the matching map and prediction to Firestore. An Expo app displays each update. The verified route runs the Firebase emulators and the Expo web target. The iOS bundle builds. Hosted Firestore, a physical phone, and a connected mat await verification.
+Drag a pressure mat and a person onto a virtual bed on your laptop. A contact model turns the person's position and posture into 2,048 simulated pressure readings in mmHg. Python validates each frame, a trained PyTorch CNN estimates the posture from the grid alone, Firestore stores the frame and its result together, and an Expo app on your phone shows the heatmap and every metric live.
 
-**Watch the demonstration** · [90-second MP4](evidence/live_test/demonstration.mp4) · [Read-aloud transcript PDF](Professor-transcript.pdf) · [Latest live test report](LIVE_TEST.md) · [Interview questions](QUESTIONS.md).
+```
+Person movement → virtual sensor readings → Python validation → CNN inference → Firestore → Expo app on the phone
+```
 
-## Control the virtual bed
+**Verified on a physical iPhone** (Expo Go, hosted Firebase) on 21 November 2026, alongside 19 simulator checks, 5 API checks and a 26-step browser acceptance run. Pressures are simulated, and the CNN's known limits are measured and shown in the app. This is a monitoring prototype, not a clinical tool.
 
-On Windows, install 64-bit Python 3.12 with the `py` launcher, Node.js 24 with npm, and JDK 21. Open **Command Prompt** in the cloned repository and run:
+[Interactive bed guide and demo script](VIRTUAL_BED.md) · [Phone setup with Firebase console steps](PHONE.md) · [Console walkthrough video](evidence/interactive/acceptance-console.webm) · [Phase-one replay demo](evidence/live_test/demonstration.mp4) · [Interview questions](QUESTIONS.md)
 
-```bat
+## Quick start on Windows
+
+Install 64-bit Python 3.12 with the `py` launcher, Node.js 24 with npm, and JDK 21. In **PowerShell** or **Command Prompt**, from the cloned folder:
+
+```powershell
 scripts\setup.cmd
+```
+
+Laptop only, with local Firebase emulators:
+
+```powershell
 scripts\virtual-bed.cmd
 ```
 
-On macOS or Linux, run `bash scripts/setup.sh` once, then `bash scripts/virtual-bed.sh`. Open the terminal’s address, start the virtual sensor, and try lying down and turning. The operator screen opens the same frame in the official Firestore viewer. [Phase 2 guide and hosted setup](VIRTUAL_BED.md) · [Watch the virtual sensor](evidence/virtual_bed/virtual-bed.mp4).
+Then open <http://127.0.0.1:8775>. To use your phone, follow [PHONE.md](PHONE.md) once, then run `scripts\virtual-bed-hosted.cmd` and `scripts\phone.cmd` in two terminals.
+
+Tests:
+
+```powershell
+.venv\Scripts\python.exe -m pytest -q test_simulator.py
+```
+
+With the local bed running, `test_interactive.py` and `python -m proof.interactive_acceptance` exercise the API, Firestore and the console end to end. `python -m proof.model_behavior` regenerates the CNN behaviour sweep.
+
+On macOS or Linux, use `bash scripts/setup.sh` and `bash scripts/virtual-bed.sh` (add `--hosted` for a hosted project).
 
 ## Make your own recording
 
