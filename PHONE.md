@@ -131,4 +131,5 @@ Each frame costs two writes (latest and history), one read for the console's che
 | Phone: *Sign-in failed* | Wrong password, or Email/Password is off (step 4). |
 | Phone: *This account cannot read the session* | Run step 8 again with the same email to add it to `readers`. |
 | Phone stuck on *Waiting* | Press **Start transmitting** in the console and place the mat on the bed. |
+| Laptop browser hangs on `http://127.0.0.1:8775` | Open `http://localhost:8775` instead. Some Edge and Chrome settings stall on the numeric address. |
 | Expo Go cannot load the app | Use `scripts\phone.cmd --tunnel`, or set the Wi-Fi profile to Private (`Get-NetConnectionProfile`). |

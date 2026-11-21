@@ -210,7 +210,7 @@ kbd {
 .bars { display: grid; gap: 7px; margin-top: 12px; }
 .bar-row { display: grid; grid-template-columns: 70px 1fr 48px; gap: 8px; align-items: center; font-size: 13px; }
 .bar-row .track { height: 8px; border-radius: 4px; background: var(--rule-2); overflow: hidden; }
-.bar-row .fill { height: 100%; background: var(--ink-3); border-radius: 4px; transition: width 0.3s ease; }
+.bar-row .fill { width: 100%; height: 100%; background: var(--ink-3); border-radius: 4px; transform-origin: left center; transition: transform 0.3s ease; }
 .bar-row.lead .fill { background: var(--ink); }
 .bar-row span:last-child { text-align: right; font-weight: 700; }
 

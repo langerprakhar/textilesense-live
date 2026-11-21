@@ -438,7 +438,7 @@ function renderMonitor() {
       row.className = "bar-row" + (i === top ? " lead" : "");
       row.innerHTML = `<span></span><div class="track"><div class="fill"></div></div><span></span>`;
       row.children[0].textContent = NAMES[label] || label;
-      row.querySelector(".fill").style.width = (f.scores[i] * 100).toFixed(1) + "%";
+      row.querySelector(".fill").style.transform = `scaleX(${f.scores[i].toFixed(4)})`;
       row.children[2].textContent = (f.scores[i] * 100).toFixed(1) + "%";
       bars.appendChild(row);
     });

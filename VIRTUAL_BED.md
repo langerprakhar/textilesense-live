@@ -22,7 +22,7 @@ scripts\setup.cmd
 scripts\virtual-bed.cmd
 ```
 
-Open <http://127.0.0.1:8775>. The terminal prints a temporary viewer password for the browser copy of the phone app at <http://127.0.0.1:8775/monitor>.
+Open <http://127.0.0.1:8775> (or <http://localhost:8775> if the browser hangs on the numeric address). The terminal prints a temporary viewer password for the browser copy of the phone app at <http://127.0.0.1:8775/monitor>.
 
 **With your phone (hosted Firebase):** set up once using [PHONE.md](PHONE.md), then use two terminals for every demo:
 
