@@ -132,3 +132,65 @@ def test_edge_contact_is_flagged(session):
     person = Person(x=MAT.x + MAT_W, y=MAT.y + 0.89)  # half the body off the mat
     client.post("/frames", json=frame(sid, 8, person), headers=AUTH)
     assert "load_at_mat_edge" in latest(ref)["input_flags"]
+
+
+def test_unseen_recording_is_scored_but_label_is_not_used(session):
+    from dataset import recording
+
+    sid, ref = session
+    grid = recording(12, 2)[40].astype(int)
+    base = dict(
+        schema_version=1, source="recorded_replay", device="virtual-mat-01", session=sid,
+        captured_ms=time.time_ns() // 1000000, rows=32, cols=64, values=grid.ravel().tolist(),
+        recording="S12-2", row=40,
+    )
+    assert client.post("/frames", json=dict(base, seq=20, recorded_label="Right"), headers=AUTH).status_code == 200
+    first = latest(ref)
+    assert client.post("/frames", json=dict(base, seq=21, recorded_label="Left"), headers=AUTH).status_code == 200
+    second = latest(ref)
+    assert first["scores"] == second["scores"] and first["prediction"] == "Right"
+    assert second["recorded_label"] == "Left"  # stored as given, never used
+    assert second["measurement"]["contact_cells"] > 300
+    assert second["validation"]["unit"].startswith("raw recorded counts")
+    bad = dict(base, seq=22, recorded_label="Sitting")
+    assert client.post("/frames", json=bad, headers=AUTH).status_code == 422
+
+
+def test_phone_control_requests_are_rule_checked(session):
+    import requests
+
+    sid, ref = session
+    auth = "http://127.0.0.1:9199/identitytoolkit.googleapis.com/v1/accounts:signUp?key=demo"
+
+    def viewer():
+        body = dict(email=f"v{uuid.uuid4().hex[:8]}@example.test", password="pw-" + uuid.uuid4().hex, returnSecureToken=True)
+        r = requests.post(auth, json=body, timeout=5).json()
+        return r["localId"], r["idToken"]
+
+    uid, token = viewer()
+    stranger, stranger_token = viewer()
+    ref.update({"readers": [uid]})
+    base = "http://127.0.0.1:8180/v1/projects/demo-textilesense-bed/databases/(default)/documents"
+
+    def commit(as_token, doc_uid, fields, stamp=True):
+        write = {"update": {"name": f"projects/demo-textilesense-bed/databases/(default)/documents/sessions/{sid}/controls/{doc_uid}",
+                            "fields": fields}}
+        if stamp:
+            write["updateTransforms"] = [{"fieldPath": "requested_at", "setToServerValue": "REQUEST_TIME"}]
+        return requests.post(base + ":commit", json={"writes": [write]},
+                             headers={"Authorization": "Bearer " + as_token}, timeout=5).status_code
+
+    def fields(action="source", mode="recordings", subject=12, posture="right"):
+        f = {"action": {"stringValue": action}, "device": {"stringValue": "test phone"}}
+        f["mode"] = {"stringValue": mode} if mode else {"nullValue": None}
+        f["subject"] = {"integerValue": str(subject)} if subject else {"nullValue": None}
+        f["posture"] = {"stringValue": posture} if posture else {"nullValue": None}
+        return f
+
+    assert commit(token, uid, fields()) == 200
+    assert commit(token, uid, fields("start", None, None, None)) == 200
+    assert commit(token, uid, fields(action="delete_everything")) == 403
+    assert commit(token, uid, fields(subject=5)) == 403
+    assert commit(token, uid, fields(), stamp=False) == 403  # must carry server time
+    assert commit(token, stranger, fields()) == 403  # someone else's document
+    assert commit(stranger_token, stranger, fields()) == 403  # not a session reader

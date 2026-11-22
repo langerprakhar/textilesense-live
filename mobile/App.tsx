@@ -13,17 +13,8 @@ import {
 import { StatusBar } from "expo-status-bar";
 import * as Device from "expo-device";
 import Svg, { Polyline, Rect } from "react-native-svg";
-import { initializeApp } from "firebase/app";
+import { signInWithEmailAndPassword, signOut, onAuthStateChanged, User } from "firebase/auth";
 import {
-  getAuth,
-  connectAuthEmulator,
-  signInWithEmailAndPassword,
-  signOut,
-  User,
-} from "firebase/auth";
-import {
-  getFirestore,
-  connectFirestoreEmulator,
   doc,
   onSnapshot,
   collection,
@@ -35,25 +26,8 @@ import {
 } from "firebase/firestore";
 import { C, NAMES, POSTURE, MODEL_TO_POSTURE, POSTURE_COLOR } from "./src/theme";
 import { Heatmap, Legend } from "./src/heat";
+import { auth, db, projectId, SESSION, EMULATED } from "./src/firebase";
 
-// ---------- Firebase ----------
-const projectId = process.env.EXPO_PUBLIC_PROJECT_ID || "demo-textilesense";
-const SESSION = process.env.EXPO_PUBLIC_SESSION || "demo";
-const EMULATED = projectId.startsWith("demo-");
-const app = initializeApp({
-  projectId,
-  apiKey: process.env.EXPO_PUBLIC_API_KEY || "demo",
-  authDomain: projectId + ".firebaseapp.com",
-});
-const auth = getAuth(app);
-const db = getFirestore(app);
-if (EMULATED) {
-  const host = process.env.EXPO_PUBLIC_EMULATOR_HOST || "127.0.0.1";
-  connectAuthEmulator(auth, `http://${host}:${process.env.EXPO_PUBLIC_AUTH_PORT || "9099"}`, {
-    disableWarnings: true,
-  });
-  connectFirestoreEmulator(db, host, Number(process.env.EXPO_PUBLIC_FIRESTORE_PORT || 8080));
-}
 const STALE_MS = 3500;
 
 type Measurement = {
@@ -101,6 +75,8 @@ type Frame = {
   scenario?: string;
   recording?: string;
   row?: number;
+  recorded_label?: "Supine" | "Right" | "Left" | null;
+  playlist?: "tour" | "single";
   resumed: boolean;
 };
 
@@ -129,6 +105,9 @@ export default function App() {
   const [now, setNow] = useState(Date.now());
   const [tab, setTab] = useState("Live");
   const [error, setError] = useState("");
+
+  // Restore a saved sign-in so a reload or restart goes straight to the monitor.
+  useEffect(() => onAuthStateChanged(auth, (u) => setUser(u)), []);
 
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 250);
@@ -212,7 +191,12 @@ export default function App() {
       </View>
       <ScrollView contentContainerStyle={s.body}>
         {!!error && <Text style={s.errorBox}>{error}</Text>}
-        {tab === "Live" && <Live frame={frame} now={now} arrival={arrival} stale={status.tone !== "live"} />}
+        {tab === "Live" && (
+          <>
+            <Controls frame={frame} live={status.tone === "live"} send={(req) => sendControl(user, req)} />
+            <Live frame={frame} now={now} arrival={arrival} stale={status.tone !== "live"} />
+          </>
+        )}
         {tab === "Trends" && <Trends history={history} />}
         {tab === "Delivery" && <Delivery frame={frame} lag={lag} online={online} now={now} arrival={arrival} />}
         {tab === "Model" && (
@@ -239,6 +223,112 @@ export default function App() {
           </Pressable>
         ))}
       </View>
+    </View>
+  );
+}
+
+// ---------- Stream controls ----------
+type ControlRequest = {
+  action: "start" | "pause" | "source";
+  mode?: "bed" | "recordings";
+  subject?: 11 | 12 | 13;
+  posture?: "back" | "left" | "right";
+};
+async function sendControl(user: User, req: ControlRequest) {
+  // Rules require every field, so unused ones are sent as null.
+  await setDoc(doc(db, "sessions", SESSION, "controls", user.uid), {
+    action: req.action,
+    mode: req.mode ?? null,
+    subject: req.subject ?? null,
+    posture: req.posture ?? null,
+    requested_at: serverTimestamp(),
+    device: (Device.modelName || Platform.OS).slice(0, 60),
+  });
+}
+
+const POSITION_TO_POSTURE: Record<string, "back" | "right" | "left"> = { "1": "back", "2": "right", "3": "left" };
+
+function Controls({ frame, live, send }: { frame?: Frame; live: boolean; send: (r: ControlRequest) => Promise<void> }) {
+  const [busy, setBusy] = useState("");
+  const [note, setNote] = useState("");
+  const [open, setOpen] = useState(false);
+  const rec = frame?.recording ? frame.recording.replace("S", "").split("-") : null;
+  const curPerson = rec ? Number(rec[0]) : 12;
+  const curPosture = rec ? POSITION_TO_POSTURE[rec[1]] : "back";
+  const run = async (label: string, req: ControlRequest) => {
+    setBusy(label);
+    setNote("");
+    try {
+      console.log("Sending control request", JSON.stringify(req));
+      await send(req);
+      console.log("Control request stored", req.action);
+      setNote("Sent to the laptop. The next frame arrives within about a second.");
+    } catch (e: any) {
+      console.warn("Control request failed", e?.code, e?.message);
+      setNote(`The laptop did not receive it (${e?.code || e?.message || "unknown error"}).`);
+    } finally {
+      setBusy("");
+    }
+  };
+  const Btn = ({ label, req, on, wide }: { label: string; req: ControlRequest; on?: boolean; wide?: boolean }) => (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityState={{ selected: !!on }}
+      disabled={!!busy}
+      onPress={() => run(label, req)}
+      style={[s.ctl, on && s.ctlOn, wide && { flexBasis: "100%" }, busy === label && { opacity: 0.6 }]}
+    >
+      <Text style={[s.ctlText, on && s.ctlTextOn]}>{label}</Text>
+    </Pressable>
+  );
+  return (
+    <View style={s.card}>
+      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+        <Text style={[s.h2, { marginBottom: 0 }]}>Stream controls</Text>
+        <Pressable accessibilityRole="button" onPress={() => setOpen(!open)}>
+          <Text style={[s.small, s.strong]}>{open ? "Hide sources" : "Choose source"}</Text>
+        </Pressable>
+      </View>
+      <View style={s.ctlRow}>
+        <Btn label={live ? "Streaming" : "Play"} req={{ action: "start" }} on={live} />
+        <Btn label="Pause" req={{ action: "pause" }} />
+      </View>
+      <View style={s.ctlRow}>
+        <Btn
+          label={frame?.playlist === "tour" ? "Touring unseen recordings" : "Play all unseen recordings"}
+          req={{ action: "source", mode: "recordings" }}
+          on={frame?.playlist === "tour"}
+          wide
+        />
+      </View>
+      <Text style={[s.small, { marginTop: 6 }]}>
+        Three real people the CNN never trained on, each on their back, right side and left side, 8 seconds each.
+      </Text>
+      {open && (
+        <>
+          <Text style={[s.small, { marginTop: 10 }]}>Virtual bed: the laptop moves a simulated person.</Text>
+          <View style={s.ctlRow}>
+            <Btn label="Virtual bed" req={{ action: "source", mode: "bed" }} on={!rec && !!frame} wide />
+          </View>
+          <Text style={[s.small, { marginTop: 10 }]}>
+            Or play one recording on its own, from the start.
+          </Text>
+          {([11, 12, 13] as const).map((p) => (
+            <View key={p} style={s.ctlRow}>
+              <Text style={[s.small, s.strong, { width: 70, alignSelf: "center" }]}>Person {p}</Text>
+              {(["back", "left", "right"] as const).map((pos) => (
+                <Btn
+                  key={pos}
+                  label={POSTURE[pos]}
+                  req={{ action: "source", mode: "recordings", subject: p, posture: pos }}
+                  on={!!rec && frame?.playlist !== "tour" && curPerson === p && curPosture === pos}
+                />
+              ))}
+            </View>
+          ))}
+        </>
+      )}
+      {!!note && <Text style={[s.small, { marginTop: 8 }]}>{note}</Text>}
     </View>
   );
 }
@@ -324,8 +414,20 @@ function Live({ frame, now, arrival, stale }: { frame?: Frame; now: number; arri
   const agree =
     frame.prediction && sim?.person_on_bed ? MODEL_TO_POSTURE[frame.prediction] === sim.posture_selected : null;
   const flags = (frame.input_flags || []).filter((f) => FLAG_TEXT[f]);
+  const person = frame.recording ? frame.recording.replace("S", "").split("-")[0] : null;
+  const labelAgree = frame.prediction && frame.recorded_label ? frame.prediction === frame.recorded_label : null;
   return (
     <>
+      <View style={[s.sourceBox, person ? s.sourceReal : s.sourceSim]}>
+        <Text style={s.sourceTitle}>
+          {person ? `Real recording: person ${person}${frame.playlist === "tour" ? " (automatic tour)" : ""}` : "Virtual bed"}
+        </Text>
+        <Text style={s.sourceText}>
+          {person
+            ? "Recorded on a real pressure mat. This person was held out of training, so the CNN has never seen them."
+            : "Pressure generated live from a body model as the laptop moves the person."}
+        </Text>
+      </View>
       <View style={[s.card, stale && { opacity: 0.75 }]}>
         <View style={{ flexDirection: "row", gap: 16 }}>
           <View style={s.mapBox}>
@@ -345,6 +447,17 @@ function Live({ frame, now, arrival, stale }: { frame?: Frame; now: number; arri
               </View>
             ) : (
               <Text style={s.small}>Every sensor reads zero, so the model was not run.</Text>
+            )}
+            {frame.recorded_label && (
+              <View style={s.compare}>
+                <Text style={s.small}>Label in the dataset</Text>
+                <Text style={s.compareVal}>{NAMES[frame.recorded_label]}</Text>
+                {labelAgree != null && (
+                  <Text style={[s.chip, labelAgree ? s.chipOk : s.chipWarn]}>
+                    {labelAgree ? "Model matches" : "Model differs"}
+                  </Text>
+                )}
+              </View>
             )}
             {sim && (
               <View style={s.compare}>
@@ -368,7 +481,7 @@ function Live({ frame, now, arrival, stale }: { frame?: Frame; now: number; arri
             {((now - arrival) / 1000).toFixed(1)} s ago
           </Text>
         </View>
-        <Legend />
+        <Legend caption={person ? "Recorded pressure, mmHg (1 count read as 0.1 mmHg)" : "Simulated pressure, mmHg"} />
       </View>
 
       {m && (
@@ -378,11 +491,15 @@ function Live({ frame, now, arrival, stale }: { frame?: Frame; now: number; arri
           <Metric label="Load on mat" value={`${m.load_kg.toFixed(1)}`} unit="kg" />
           <Metric label="Contact area" value={`${Math.round(m.contact_area_m2 * 10000)}`} unit="cm²" />
           <Metric label="Loaded sensors" value={`${m.contact_cells}`} unit="of 2,048" />
-          <Metric
-            label="Body load on mat"
-            value={sim?.person_on_bed ? pct(sim.coverage) : "–"}
-            unit="simulator truth"
-          />
+          {person ? (
+            <Metric label="Recorded frame" value={String(frame.row ?? "–")} unit={`of person ${person}`} />
+          ) : (
+            <Metric
+              label="Body load on mat"
+              value={sim?.person_on_bed ? pct(sim.coverage) : "–"}
+              unit="simulator truth"
+            />
+          )}
         </View>
       )}
       {flags.length > 0 && (
@@ -396,8 +513,9 @@ function Live({ frame, now, arrival, stale }: { frame?: Frame; now: number; arri
         </View>
       )}
       <Text style={s.fine}>
-        Pressures are simulated by a contact model of a 75 kg person on a virtual 32 × 64 mat. The CNN sees only the grid;
-        the laptop setting is shown for comparison.
+        {person
+          ? "PhysioNet PmatData Experiment I. The CNN sees only the grid; the dataset label is shown for comparison."
+          : "Pressures are simulated by a contact model of a 75 kg person on a virtual 32 × 64 mat. The CNN sees only the grid; the laptop setting is shown for comparison."}
       </Text>
     </>
   );
@@ -674,6 +792,25 @@ const s = StyleSheet.create({
   button: { backgroundColor: C.ink, borderRadius: 8, paddingVertical: 13, alignItems: "center", marginTop: 4 },
   buttonGhost: { backgroundColor: C.panel, borderWidth: 2, borderColor: C.ink, marginTop: 10 },
   buttonText: { color: "#fff", fontWeight: "700", fontSize: 16 },
+  ctlRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginTop: 10 },
+  ctl: {
+    flexGrow: 1,
+    flexBasis: 0,
+    borderWidth: 1.5,
+    borderColor: C.ink,
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 6,
+    alignItems: "center",
+  },
+  ctlOn: { backgroundColor: C.ink },
+  ctlText: { color: C.ink, fontWeight: "700", fontSize: 14 },
+  ctlTextOn: { color: "#fff" },
+  sourceBox: { borderRadius: 12, padding: 12, borderWidth: 1 },
+  sourceReal: { backgroundColor: "#e8ecfb", borderColor: "#c3cdf3" },
+  sourceSim: { backgroundColor: C.panel, borderColor: C.rule },
+  sourceTitle: { color: C.ink, fontWeight: "800", fontSize: 15 },
+  sourceText: { color: C.ink2, fontSize: 13, lineHeight: 18, marginTop: 2 },
   errorBox: { backgroundColor: C.errorBg, color: C.error, padding: 10, borderRadius: 8, fontSize: 13 },
   pill: { flexDirection: "row", alignItems: "center", gap: 6, paddingVertical: 5, paddingHorizontal: 11, borderRadius: 999 },
   dot: { width: 8, height: 8, borderRadius: 4 },

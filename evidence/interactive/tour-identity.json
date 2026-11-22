@@ -1,0 +1,30 @@
+{
+ "seen": {
+  "S11-1": {
+   "label": "Supine",
+   "frames": 1,
+   "correct": 1
+  },
+  "S11-2": {
+   "label": "Right",
+   "frames": 8,
+   "correct": 8
+  },
+  "S11-3": {
+   "label": "Left",
+   "frames": 8,
+   "correct": 8
+  },
+  "S12-1": {
+   "label": "Supine",
+   "frames": 8,
+   "correct": 8
+  },
+  "S12-2": {
+   "label": "Right",
+   "frames": 7,
+   "correct": 7
+  }
+ },
+ "identity": "32/32"
+}

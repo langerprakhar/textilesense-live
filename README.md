@@ -6,7 +6,9 @@ Drag a pressure mat and a person onto a virtual bed on your laptop. A contact mo
 Person movement → virtual sensor readings → Python validation → CNN inference → Firestore → Expo app on the phone
 ```
 
-**Verified on a physical iPhone** (Expo Go, hosted Firebase) on 21 November 2026, alongside 19 simulator checks, 5 API checks and a 26-step browser acceptance run. Pressures are simulated, and the CNN's known limits are measured and shown in the app. This is a monitoring prototype, not a clinical tool.
+A second source, switchable live from the laptop or the phone, streams **real recordings of three people the CNN never trained on**, with the dataset's label shown beside the model's estimate.
+
+**Verified on a physical iPhone** (Expo Go, hosted Firebase) on 21 November 2026, alongside 19 simulator checks, 7 API and security-rule checks, and a 26-step browser acceptance run. Pressures are simulated, and the CNN's known limits are measured and shown in the app. This is a monitoring prototype, not a clinical tool.
 
 [Interactive bed guide and demo script](VIRTUAL_BED.md) · [Phone setup with Firebase console steps](PHONE.md) · [Console walkthrough video](evidence/interactive/acceptance-console.webm) · [Phase-one replay demo](evidence/live_test/demonstration.mp4) · [Interview questions](QUESTIONS.md)
 

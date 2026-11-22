@@ -104,6 +104,10 @@ Use two terminals.
 10. **Sign in on the phone** with the viewer email and password from step 8.
 11. **Start transmitting** in the laptop console. Drag the mat and the person onto the bed. On the phone you should see the frame number climb about once a second and the heatmap follow the person.
 
+Tips for recording: set the iPhone to **Settings → Display & Brightness → Auto-Lock → Never** while you film. iOS pauses Expo Go when the phone locks, and the app then catches up when you unlock it. The app remembers your sign-in, so reloading does not ask for the password again.
+
+**Driving the demo from the phone:** the **Stream controls** card at the top of the Live tab has **Play**, **Pause** and **Play all unseen recordings**, which tours real recordings of three people the CNN never trained on. **Choose source** switches back to the virtual bed or plays one recording. See [VIRTUAL_BED.md](VIRTUAL_BED.md#control-it-from-the-phone) for how these requests are checked.
+
 ## How to confirm a physical phone received each frame
 
 - In the console, step 5 of **Signal chain for this frame** reads like *iPhone 15 (physical phone) is showing frame 212, 380 ms after commit*.
@@ -117,6 +121,7 @@ Use two terminals.
 - Only a signed-in user whose UID is in `sessions/virtual-bed.readers` can read that session's `state`, `events` and `viewers`.
 - No app user can write readings. Python writes through the Admin SDK, which Firebase trusts as the server.
 - A viewer may write exactly one document, `viewers/{their own UID}`, with a fixed set of fields, and `rendered_at` must equal the server's request time. A phone cannot invent when it displayed a frame.
+- A viewer may also write `controls/{their own UID}` to ask the laptop to start, pause or change source. Only the actions `start`, `pause` and `source`, the persons 11–13 and the three postures are accepted, with a server-stamped time. The laptop ignores requests older than its own start.
 
 ## Quota and cost
 
@@ -132,4 +137,6 @@ Each frame costs two writes (latest and history), one read for the console's che
 | Phone: *This account cannot read the session* | Run step 8 again with the same email to add it to `readers`. |
 | Phone stuck on *Waiting* | Press **Start transmitting** in the console and place the mat on the bed. |
 | Laptop browser hangs on `http://127.0.0.1:8775` | Open `http://localhost:8775` instead. Some Edge and Chrome settings stall on the numeric address. |
+| Phone shows *Cannot find native module* after an update | Stop `scripts\phone.cmd` with Ctrl+C, run it again, close Expo Go fully and scan the new QR code. This happens if packages change while Expo is running. |
+| Phone stops updating | The phone locked or Expo Go went to the background. Unlock it, and turn Auto-Lock off while recording. |
 | Expo Go cannot load the app | Use `scripts\phone.cmd --tunnel`, or set the Wi-Fi profile to Private (`Get-NetConnectionProfile`). |

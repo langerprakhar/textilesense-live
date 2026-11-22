@@ -25,6 +25,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
+from dataset import recording
 from store import database
 from virtual_bed.body import LEFT_T, RIGHT_T, SUPINE_T, Person
 from virtual_bed.sensor import (
@@ -93,6 +94,56 @@ class Link:
 
 
 link = Link()
+
+# Real recordings of the three people held out from training and validation.
+UNSEEN = (11, 12, 13)
+POSITION = {"back": 1, "right": 2, "left": 3}
+LABEL = {"back": "Supine", "right": "Right", "left": "Left"}
+FIRST_ROW = 10  # skip the first seconds, while the person settles
+TOUR = [(subject, posture) for subject in UNSEEN for posture in ("back", "right", "left")]
+CLIP_FRAMES = 8  # seconds each recording plays during the automatic tour
+
+
+class Playback:
+    def __init__(self):
+        self.mode = "bed"  # or "recordings"
+        self.subject = 12
+        self.posture = "back"
+        self.row = FIRST_ROW
+        self.cache = {}
+        self.auto = False  # automatic tour through every unseen person and posture
+        self.played = 0  # frames played from the current recording during the tour
+
+    def frames(self):
+        key = (self.subject, self.posture)
+        if key not in self.cache:
+            self.cache[key] = recording(self.subject, POSITION[self.posture]).astype(int)
+        return self.cache[key]
+
+    def current(self):
+        frames = self.frames()
+        if self.row >= len(frames) - 2:
+            self.row = FIRST_ROW
+        return frames[self.row], self.row, len(frames)
+
+    def advance(self):
+        self.row += 1
+        if self.row >= len(self.frames()) - 2:
+            self.row = FIRST_ROW
+        if self.auto:
+            self.played += 1
+            if self.played >= CLIP_FRAMES:
+                i = TOUR.index((self.subject, self.posture)) if (self.subject, self.posture) in TOUR else -1
+                self.subject, self.posture = TOUR[(i + 1) % len(TOUR)]
+                self.row, self.played = FIRST_ROW, 0
+
+    def start_tour(self):
+        self.auto = True
+        self.subject, self.posture = TOUR[0]
+        self.row, self.played = FIRST_ROW, 0
+
+
+playback = Playback()
 receipts: dict[str, dict] = {}
 preview = {"counts": [0] * 2048, "truth": {}, "measure": measure(np.zeros(2048)), "field": None}
 
@@ -139,6 +190,27 @@ def envelope(mat, person, truth):
 
 def compute_preview():
     mat, person, posture = scene.snapshot()
+    if playback.mode == "recordings":
+        with lock:
+            grid, row, total = playback.current()
+            grid = grid.copy()
+        with lock:
+            preview.update(
+                counts=grid.ravel().tolist(),
+                truth=dict(on_bed=True, coverage=None),
+                measure=measure(grid),
+                field=[0] * len(preview.get("field") or [0] * 3468),
+                field_shape=preview.get("field_shape", [68, 51]),
+                envelope=dict(
+                    ok=True,
+                    reasons=[
+                        f"Real recording of subject {playback.subject}, one of three people "
+                        "held out from training and validation. The CNN has never seen them."
+                    ],
+                ),
+                scene=scene_json(mat, person, posture),
+            )
+        return
     if mat is None:
         counts = np.zeros((32, 64), dtype=int)
         truth = dict(on_bed=person is not None, coverage=None)
@@ -193,6 +265,24 @@ def payload(seq, mat, person, posture):
     )
 
 
+def recorded_payload(seq, grid, row, subject, posture, auto):
+    return dict(
+        schema_version=1,
+        source="recorded_replay",
+        device=DEVICE,
+        session=SESSION,
+        seq=seq,
+        captured_ms=time.time_ns() // 1000000,
+        rows=32,
+        cols=64,
+        values=grid.ravel().tolist(),
+        recording=f"S{subject}-{POSITION[posture]}",
+        row=int(row),
+        recorded_label=LABEL[posture],
+        playlist="tour" if auto else "single",
+    )
+
+
 def send(frame):
     reply = requests.post(
         API_URL + "/frames",
@@ -208,6 +298,7 @@ def send(frame):
 
 async def animate():
     last = time.monotonic()
+    tick_at = last
     while True:
         await asyncio.sleep(1 / 30)
         now = time.monotonic()
@@ -224,6 +315,10 @@ async def animate():
                 else:
                     p.roll -= step
                 p.breath = (p.breath + dt * 2 * math.pi / 4.0) % (2 * math.pi)
+            # Recordings were sampled at 1 Hz; play them back at that rate.
+            if playback.mode == "recordings" and now - tick_at >= 1 / RATE_HZ and not link.streaming:
+                playback.advance()
+                tick_at = now
 
 
 async def previewer():
@@ -247,11 +342,21 @@ def tick():
     mat, person, posture = scene.snapshot()
     if not link.streaming:
         return
-    if mat is None:
+    if playback.mode == "recordings" and link.pending is None:
+        with lock:
+            # Label the frame with the recording it came from *before* the
+            # playlist moves on, so a frame and its label always belong together.
+            grid, row, _ = playback.current()
+            source = (playback.subject, playback.posture, playback.auto)
+            playback.advance()
+        link.pending = recorded_payload(link.seq, grid, row, *source)
+        link.attempts = 0
+        link.stages = dict(sensor=dict(seq=link.seq, captured_ms=link.pending["captured_ms"]))
+    elif mat is None and playback.mode == "bed":
         link.note = "Place the mat on the bed to take readings."
         return
     link.note = ""
-    if link.pending is None:
+    if link.pending is None and playback.mode == "bed":
         link.pending = payload(link.seq, mat, person, posture)
         link.attempts = 0
         link.stages = dict(
@@ -327,6 +432,50 @@ def retry(message):
     link.stages["python"] = dict(status="retrying", detail=link.error)
 
 
+remote = {}  # last control request a phone sent, for the console to display
+STARTED_MS = time.time_ns() // 1000000
+
+
+def watch_controls():
+    """Act on start/pause/source requests from signed-in phones (rules-checked)."""
+
+    def changed(docs, changes, read_time):
+        for change in changes:
+            data = change.document.to_dict() or {}
+            stamp = data.get("requested_at")
+            if stamp is None or stamp.timestamp() * 1000 < STARTED_MS:
+                continue  # ignore requests made before this console started
+            key = (change.document.id, stamp.timestamp())
+            if remote.get("key") == key:
+                continue
+            action = data.get("action")
+            if action in ("start", "pause"):
+                if action == "start":
+                    with lock:  # a phone cannot drag the mat, so put it on the bed
+                        if playback.mode == "bed" and scene.mat is None:
+                            scene.mat = MatPlacement()
+                apply_transmit(action)
+            elif action == "source" and data.get("mode") in ("bed", "recordings"):
+                # Choosing a source on the phone plays it from the beginning.
+                apply_source(data["mode"], data.get("subject"), data.get("posture"))
+                with lock:
+                    if not playback.auto:
+                        playback.row = FIRST_ROW
+                    link.pending = None
+                apply_transmit("start")
+            remote.update(
+                key=key,
+                action=action,
+                mode=data.get("mode"),
+                subject=data.get("subject"),
+                posture=data.get("posture"),
+                device=data.get("device", "a phone"),
+                at_ms=int(stamp.timestamp() * 1000),
+            )
+
+    return session_ref.collection("controls").on_snapshot(changed)
+
+
 def watch_receipts():
     def changed(docs, changes, read_time):
         for d in docs:
@@ -346,11 +495,13 @@ async def lifespan(app):
     link.seq = doc.get("seq", -1) + 1
     link.document = doc or None
     watcher = await asyncio.to_thread(watch_receipts)
+    controls = await asyncio.to_thread(watch_controls)
     tasks = [asyncio.create_task(f()) for f in (animate, previewer, transmitter)]
     try:
         yield
     finally:
         watcher.unsubscribe()
+        controls.unsubscribe()
         for t in tasks:
             t.cancel()
         await asyncio.gather(*tasks, return_exceptions=True)
@@ -413,6 +564,59 @@ def change_scene(op: SceneOp, request: Request):
         return scene_json(scene.mat, scene.person, scene.posture)
 
 
+class SourceOp(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    mode: Literal["bed", "recordings"]
+    subject: Literal[11, 12, 13] | None = None
+    posture: Literal["back", "left", "right"] | None = None
+
+
+def apply_source(mode, subject=None, posture=None):
+    with lock:
+        if mode == "recordings" and subject is None and posture is None:
+            # No particular recording asked for: tour all of them automatically.
+            playback.mode = mode
+            playback.start_tour()
+            link.pending = None
+            if scene.mat is None:
+                scene.mat = MatPlacement()
+            return dict(mode=mode, subject=playback.subject, posture=playback.posture, auto=True)
+        if mode == "recordings":
+            playback.auto = False
+        changed = mode != playback.mode
+        playback.mode = mode
+        if subject is not None and subject != playback.subject:
+            playback.subject, changed = subject, True
+        if posture is not None and posture != playback.posture:
+            playback.posture, changed = posture, True
+        if changed:
+            playback.row = FIRST_ROW
+            link.pending = None  # never send a frame captured from the other source
+        if mode == "recordings" and scene.mat is None:
+            scene.mat = MatPlacement()  # the recording is a full mat reading
+    return dict(mode=playback.mode, subject=playback.subject, posture=playback.posture, auto=playback.auto)
+
+
+def apply_transmit(action):
+    if action == "start":
+        if not link.streaming:
+            link.sent = 0
+        link.streaming = True
+        link.error = ""
+    elif action == "pause":
+        link.streaming = False
+    elif action == "drop_link":
+        link.drop = True
+    else:
+        link.drop = False
+
+
+@app.post("/api/source")
+def change_source(op: SourceOp, request: Request):
+    same_origin(request)
+    return apply_source(op.mode, op.subject, op.posture)
+
+
 class TransmitOp(BaseModel):
     model_config = ConfigDict(extra="forbid")
     action: Literal["start", "pause", "drop_link", "restore_link"]
@@ -421,17 +625,7 @@ class TransmitOp(BaseModel):
 @app.post("/api/transmit")
 def transmit(op: TransmitOp, request: Request):
     same_origin(request)
-    if op.action == "start":
-        if not link.streaming:
-            link.sent = 0
-        link.streaming = True
-        link.error = ""
-    elif op.action == "pause":
-        link.streaming = False
-    elif op.action == "drop_link":
-        link.drop = True
-    else:
-        link.drop = False
+    apply_transmit(op.action)
     return {"streaming": link.streaming, "drop": link.drop}
 
 
@@ -444,6 +638,7 @@ def doc_summary(doc, full=False):
         "measurement", "input_flags", "validation", "simulator", "mat", "count",
         "missing", "duplicates", "out_of_order", "gap_frames", "resumed", "digest",
         "unit", "value_scale", "inference_ms", "api_ms", "model_input", "delayed",
+        "recording", "row", "recorded_label", "playlist",
     ]
     out = {k: doc.get(k) for k in keys if k in doc}
     out["values"] = doc.get("values")
@@ -474,7 +669,20 @@ def live():
             rate_hz=RATE_HZ,
         ),
         frame=doc_summary(link.document),
+        source=dict(
+            mode=playback.mode,
+            subject=playback.subject,
+            posture=playback.posture,
+            row=playback.row,
+            rows=len(playback.frames()) if playback.mode == "recordings" else None,
+            auto=playback.auto,
+            tour_step=(TOUR.index((playback.subject, playback.posture)) + 1) if playback.auto else None,
+            tour_len=len(TOUR),
+            clip_left=CLIP_FRAMES - playback.played if playback.auto else None,
+            unseen=list(UNSEEN),
+        ),
         phones=[dict(uid=k[:6], **v) for k, v in phones[:3]],
+        remote={k: v for k, v in remote.items() if k != "key"} or None,
         server_ms=time.time_ns() // 1000000,
         project=os.environ.get("TEXTILE_PROJECT"),
         session=SESSION,

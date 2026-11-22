@@ -38,6 +38,9 @@ class RecordedReading(Reading):
     source: Literal["recorded_replay", "recorded pressure mat"]
     recording: ID
     row: Annotated[int, Field(ge=0)]
+    # The dataset's own posture label, stored for comparison. Never a model input.
+    recorded_label: Literal["Supine", "Right", "Left"] | None = None
+    playlist: Literal["tour", "single"] | None = None
 
 
 class VirtualReading(Reading):
@@ -181,7 +184,7 @@ def ingest(
         gap = received - old.get("received_ms", received)
         skipped = r.seq - last - 1 if last >= 0 else 0
         extra = {}
-        if interactive:
+        if interactive or isinstance(r, RecordedReading):
             extra = dict(
                 measurement=measure(grid),
                 model_status="not_run_no_load" if unloaded else "ran",
@@ -198,7 +201,9 @@ def ingest(
                     shape="32 x 64",
                     min=int(grid.min()),
                     max=int(grid.max()),
-                    unit="0.1 mmHg per count",
+                    unit="0.1 mmHg per count"
+                    if interactive
+                    else "raw recorded counts, read as 0.1 mmHg",
                     clock_skew_ms=received - r.captured_ms,
                     sequence="first"
                     if last < 0

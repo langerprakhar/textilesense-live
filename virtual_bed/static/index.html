@@ -19,6 +19,30 @@
 
 <main class="console">
   <aside class="rail" aria-label="Controls">
+    <h2>Data source</h2>
+    <div class="seg two" role="group" aria-label="Data source" id="sourceMode">
+      <button data-mode="bed" aria-pressed="true">Virtual bed</button>
+      <button data-mode="recordings" aria-pressed="false">Unseen recordings</button>
+    </div>
+    <p class="hint" id="sourceHint">Generate new pressure maps by moving a virtual person.</p>
+    <div class="rec-only" hidden>
+      <button class="btn wide" id="tourBtn" style="margin-top:10px">Tour all automatically</button>
+      <p class="hint" id="tourHint">Plays persons 11, 12 and 13 on back, right side and left side, 8 seconds each.</p>
+      <h2>Or pick one recording</h2>
+      <div class="seg" role="group" aria-label="Recorded person" id="subject">
+        <button data-subject="11" aria-pressed="false">Person 11</button>
+        <button data-subject="12" aria-pressed="true">Person 12</button>
+        <button data-subject="13" aria-pressed="false">Person 13</button>
+      </div>
+      <h2>Their recorded posture</h2>
+      <div class="seg" role="group" aria-label="Recorded posture" id="recPosture">
+        <button data-rec="back" aria-pressed="true">On back</button>
+        <button data-rec="left" aria-pressed="false">Left side</button>
+        <button data-rec="right" aria-pressed="false">Right side</button>
+      </div>
+      <p class="hint">Real PhysioNet recordings, one frame per second. These three people were held out of training and validation, so the CNN has never seen them.</p>
+    </div>
+    <div class="bed-only">
     <h2>Toolbox</h2>
     <div class="tools" id="tools">
       <div class="tool" id="toolMat" data-tool="mat" role="button" tabindex="0" aria-label="Pressure mat. Drag onto the bed, or press Enter to place it in the middle.">
@@ -59,6 +83,7 @@
       <button class="btn" id="getUp">Get up</button>
     </div>
 
+    </div>
     <h2>Transmission</h2>
     <button class="btn primary wide" id="transmit">Start transmitting</button>
     <div class="txstate" id="txState">One complete frame per second, sent to Python.</div>
@@ -76,8 +101,8 @@
 
   <section class="stage" aria-label="Bed">
     <div class="stage-head">
-      <h1>Bed, seen from above</h1>
-      <p>Head of the bed at the top. Queen mattress 152 × 203 cm.</p>
+      <h1 id="stageTitle">Bed, seen from above</h1>
+      <p id="stageSub">Head of the bed at the top. Queen mattress 152 × 203 cm.</p>
     </div>
     <div class="bedwrap">
       <svg id="bed" viewBox="-12 -30 176 246" role="img" aria-label="Top-down bed with pressure mat and person">
@@ -105,6 +130,7 @@
         <g id="matLayer"></g>
         <g id="personLayer"></g>
       </svg>
+      <div class="rec-banner" id="recBanner" hidden></div>
       <div class="empty-hint" id="emptyHint">Drag the pressure mat from the toolbox onto the bed.</div>
     </div>
     <div class="readout" aria-live="off">
@@ -133,9 +159,9 @@
       </div>
     </div>
     <dl class="compare">
-      <div><dt>Posture you selected</dt><dd id="selected">–</dd></div>
-      <div><dt>Model compared with your setting</dt><dd id="agreement">–</dd></div>
-      <div><dt>Body load on the sensing area</dt><dd id="coverage">–</dd></div>
+      <div><dt id="selectedLabel">Posture you selected</dt><dd id="selected">–</dd></div>
+      <div><dt id="agreementLabel">Model compared with your setting</dt><dd id="agreement">–</dd></div>
+      <div><dt id="coverageLabel">Body load on the sensing area</dt><dd id="coverage">–</dd></div>
     </dl>
     <div class="envelope" id="envelope">Place the mat and the person to begin.</div>
 

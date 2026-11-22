@@ -11,6 +11,19 @@ service cloud.firestore {
    allow read: if group in ['state', 'events', 'viewers'] && isReader(sid);
   }
 
+  // A signed-in viewer may ask the laptop to start, pause or switch the data
+  // source. The laptop decides whether to act. Fixed fields and values only.
+  match /sessions/{sid}/controls/{uid} {
+   allow create, update: if isReader(sid) && request.auth.uid == uid &&
+    request.resource.data.keys().hasOnly(['action', 'mode', 'subject', 'posture', 'requested_at', 'device']) &&
+    request.resource.data.action in ['start', 'pause', 'source'] &&
+    request.resource.data.mode in ['bed', 'recordings', null] &&
+    request.resource.data.subject in [11, 12, 13, null] &&
+    request.resource.data.posture in ['back', 'left', 'right', null] &&
+    request.resource.data.device is string && request.resource.data.device.size() < 80 &&
+    request.resource.data.requested_at == request.time;
+  }
+
   // A signed-in viewer may report which frame its screen is showing. It can
   // write only its own receipt, only these fields, stamped with server time.
   match /sessions/{sid}/viewers/{uid} {

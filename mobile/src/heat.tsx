@@ -56,11 +56,11 @@ export function Heatmap({ values, width }: { values: number[]; width: number }) 
   );
 }
 
-export function Legend() {
+export function Legend({ caption = "Simulated pressure, mmHg" }: { caption?: string }) {
   const ticks = [1, 10, 25, 50, 100];
   return (
     <View>
-      <Text style={s.cap}>Simulated pressure, mmHg</Text>
+      <Text style={s.cap}>{caption}</Text>
       <Svg height={10} width="100%">
         <Defs>
           <LinearGradient id="g" x1="0" y1="0" x2="1" y2="0">

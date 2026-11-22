@@ -258,6 +258,21 @@ for (const tile of document.querySelectorAll(".tool")) {
 for (const b of document.querySelectorAll("#posture button")) {
   b.addEventListener("click", () => sceneOp({ op: "posture", posture: b.dataset.posture }));
 }
+function setSource(body) {
+  post("/api/source", body).catch((e) => { $("txError").textContent = e.message; });
+}
+for (const b of document.querySelectorAll("#sourceMode button")) {
+  b.addEventListener("click", () => setSource({ mode: b.dataset.mode }));
+}
+for (const b of document.querySelectorAll("#subject button")) {
+  b.addEventListener("click", () => setSource({ mode: "recordings", subject: Number(b.dataset.subject) }));
+}
+for (const b of document.querySelectorAll("#recPosture button")) {
+  b.addEventListener("click", () => setSource({ mode: "recordings", posture: b.dataset.rec }));
+}
+const recording = () => live && live.source && live.source.mode === "recordings";
+$("tourBtn").addEventListener("click", () => setSource({ mode: "recordings" }));
+
 $("turn").addEventListener("input", (e) => {
   sliderActive = true;
   local.theta = Number(e.target.value);
@@ -287,6 +302,8 @@ document.addEventListener("keydown", (e) => {
     const base = local.theta ?? s.theta;
     local.theta = Math.round(base + (e.key === "]" ? 5 : -5));
     sceneOp({ op: "rotate", theta: local.theta });
+  } else if ("blr".includes(e.key.toLowerCase()) && e.key.length === 1 && recording()) {
+    setSource({ mode: "recordings", posture: { b: "back", l: "left", r: "right" }[e.key.toLowerCase()] });
   } else if ("blr".includes(e.key.toLowerCase()) && e.key.length === 1) {
     sceneOp({ op: "posture", posture: { b: "back", l: "left", r: "right" }[e.key.toLowerCase()] });
   } else if (e.key.toLowerCase() === "u") {
@@ -334,7 +351,7 @@ function renderBed() {
   ctx.putImageData(img, 0, 0);
   $("offmat").setAttribute("href", any ? offCanvas.toDataURL() : "");
 
-  const p = sc.person;
+  const p = recording() ? null : sc.person;
   if (p) {
     ensurePerson();
     if (!personG) return;
@@ -352,7 +369,22 @@ function renderBed() {
     figSide.setAttribute("opacity", t.toFixed(3));
   } else removePerson();
 
-  $("emptyHint").textContent = !sc.mat
+  const src = live.source || {};
+  const banner = $("recBanner");
+  banner.hidden = !recording();
+  if (recording()) {
+    banner.innerHTML = "";
+    const b = document.createElement("b");
+    b.textContent = `Person ${src.subject}, ${POSTURE[src.posture].toLowerCase()}`;
+    banner.append(b, src.auto
+      ? ` (automatic tour, recording ${src.tour_step} of ${src.tour_len}, next in ${src.clip_left} s)`
+      : ` (real recording, frame ${src.row} of ${src.rows})`);
+  }
+  $("stageTitle").textContent = recording() ? "Real mat recording, seen from above" : "Bed, seen from above";
+  $("stageSub").textContent = recording()
+    ? "PhysioNet PmatData, a person the CNN never saw. Head at the top."
+    : "Head of the bed at the top. Queen mattress 152 × 203 cm.";
+  $("emptyHint").textContent = recording() ? "" : !sc.mat
     ? "Drag the pressure mat from the toolbox onto the bed."
     : !sc.person ? "Drag the person onto the mat. With nobody on it, every sensor reads zero." : "";
 }
@@ -364,11 +396,22 @@ function renderReadout() {
   $("rPeak").textContent = on ? m.peak_mmhg.toFixed(1) + " mmHg" : "No mat";
   $("rLoad").textContent = on ? m.load_kg.toFixed(1) + " kg" : "–";
   $("rArea").textContent = on ? (m.contact_area_m2 * 10000).toFixed(0) + " cm²" : "–";
-  $("rCov").textContent = !live.scene.person ? "Nobody on bed" : !on ? "0%" : pct(t.coverage);
+  $("rCov").textContent = recording() ? "Real recording" : !live.scene.person ? "Nobody on bed" : !on ? "0%" : pct(t.coverage);
 }
 
 function renderControls() {
   const sc = live.scene;
+  const src = live.source || { mode: "bed" };
+  for (const b of document.querySelectorAll("#sourceMode button")) b.setAttribute("aria-pressed", String(b.dataset.mode === src.mode));
+  for (const b of document.querySelectorAll("#subject button")) b.setAttribute("aria-pressed", String(!src.auto && Number(b.dataset.subject) === src.subject));
+  for (const b of document.querySelectorAll("#recPosture button")) b.setAttribute("aria-pressed", String(!src.auto && b.dataset.rec === src.posture));
+  $("tourBtn").classList.toggle("primary", !!src.auto);
+  $("tourBtn").textContent = src.auto ? "Touring all recordings" : "Tour all automatically";
+  document.querySelector(".rec-only").hidden = !recording();
+  document.querySelector(".bed-only").hidden = recording();
+  $("sourceHint").textContent = recording()
+    ? "Stream real pressure maps of people the model was never trained on."
+    : "Generate new pressure maps by moving a virtual person.";
   $("toolMat").dataset.placed = String(!!sc.mat);
   $("toolPerson").dataset.placed = String(!!sc.person);
   $("toolHint").textContent = !sc.mat
@@ -393,7 +436,13 @@ function renderControls() {
   $("txState").textContent = L.streaming
     ? `Sending frame ${L.pending ?? L.next_seq} next. ${L.sent} of ${L.cap} sent in this run.`
     : `Paused. The next frame will be number ${L.pending ?? L.next_seq}.`;
-  $("txNote").textContent = L.drop ? "Link loss is switched on in Diagnostics. Frames are numbered but never arrive." : L.note;
+  const r = live.remote;
+  const fromPhone = r && live.server_ms - r.at_ms < 8000
+    ? `${r.device} asked to ${r.action === "source"
+      ? (r.mode === "recordings" ? `play person ${r.subject}, ${POSTURE[r.posture].toLowerCase()}` : "use the virtual bed")
+      : r.action}.`
+    : "";
+  $("txNote").textContent = L.drop ? "Link loss is switched on in Diagnostics. Frames are numbered but never arrive." : fromPhone || L.note;
   if (L.error || !busy) $("txError").textContent = L.error;
 
   const pill = $("streamPill");
@@ -449,6 +498,22 @@ function renderMonitor() {
     bars.appendChild(p);
   }
   const sim = f.simulator || {};
+  if (f.recording) {
+    const [subj] = f.recording.replace("S", "").split("-");
+    $("selectedLabel").textContent = "Label in the dataset";
+    $("agreementLabel").textContent = "Model compared with the label";
+    $("coverageLabel").textContent = "Recording";
+    $("selected").textContent = NAMES[f.recorded_label] || "–";
+    const ag = $("agreement");
+    if (f.prediction && f.recorded_label) {
+      const same = f.prediction === f.recorded_label;
+      ag.innerHTML = `<span class="agree ${same ? "yes" : "no"}">${same ? "Matches" : "Differs"}</span>`;
+    } else ag.textContent = "–";
+    $("coverage").textContent = `Person ${subj} (unseen), frame ${f.row}`;
+  } else {
+  $("selectedLabel").textContent = "Posture you selected";
+  $("agreementLabel").textContent = "Model compared with your setting";
+  $("coverageLabel").textContent = "Body load on the sensing area";
   $("selected").textContent = sim.person_on_bed ? POSTURE[sim.posture_selected] + (Math.abs(sim.roll) % 1 > 0.01 ? " (rolling)" : "") : "Nobody on the bed";
   const ag = $("agreement");
   if (f.prediction && sim.person_on_bed) {
@@ -456,11 +521,12 @@ function renderMonitor() {
     ag.innerHTML = `<span class="agree ${same ? "yes" : "no"}">${same ? "Matches" : "Differs"}</span>`;
   } else ag.textContent = "–";
   $("coverage").textContent = sim.person_on_bed ? pct(sim.coverage) : "–";
+  }
 
   const env = live.envelope || { ok: true, reasons: [] };
   const box = $("envelope");
   box.classList.toggle("out", !env.ok);
-  if (!live.scene.mat || !live.scene.person) {
+  if (recording() || !live.scene.mat || !live.scene.person) {
     box.textContent = env.reasons[0] || "";
   } else if (env.ok) {
     box.textContent = "Current placement is inside the conditions the CNN was trained on.";

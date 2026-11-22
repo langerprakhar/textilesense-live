@@ -36,6 +36,19 @@ scripts\phone.cmd
 
 If the laptop is on eduroam or another campus network, which block phone-to-laptop traffic, use `scripts\phone.cmd --tunnel`.
 
+## Two data sources, switchable live
+
+| Source | What the CNN receives | Ground truth shown beside the estimate |
+|---|---|---|
+| **Virtual bed** | New pressure maps generated live from the body model as you move and roll the person. | The posture you selected |
+| **Unseen recordings** | Real PhysioNet PmatData frames of persons 11, 12 and 13. These three were held out of both training and validation, so the CNN has never seen them. | The dataset's own label |
+
+Choose **Unseen recordings** on the laptop, or **Play all unseen recordings** on the phone, to start an automatic tour: each of the three people on their back, right side and left side for 8 seconds each, about 72 seconds per loop, repeating. You can also pick a single person and posture. Every frame carries `recording` (for example `S12-2`), `row` and `recorded_label`. The API stores the label but never passes it to the model, and a test sends one grid with two different labels and gets identical scores. In a hosted run, all 32 frames checked in the stored history were byte-for-byte the recorded rows they name, and the CNN matched the label on 32 of 32 ([check](evidence/interactive/tour-identity.json)). Its offline held-out accuracy on these people is 98.9%, so an occasional miss is expected and honest.
+
+## Control it from the phone
+
+The phone's **Stream controls** card has **Play**, **Pause**, **Play all unseen recordings**, and **Choose source** for the virtual bed or one specific recording. A tap writes a small request to `sessions/virtual-bed/controls/{your UID}`. The rules allow only a session viewer, only the fields `action`, `mode`, `subject`, `posture`, `device` and a server-stamped `requested_at`, and only fixed values. The laptop listens, acts, and shows which device asked ("iPhone 17 Pro Max asked to start"). If Play is tapped while the virtual bed is empty, the laptop puts the mat on the bed so readings flow. Dragging and rolling the virtual person stays on the laptop.
+
 ## Demonstrate it yourself (about 3 minutes)
 
 | Do this on the laptop | What to point at | What to say |
@@ -49,6 +62,7 @@ If the laptop is on eduroam or another campus network, which block phone-to-lapt
 | Click **Get up**. | Zeros return; phone shows *No load*. | “Fresh empty-bed readings keep arriving.” |
 | Click **Pause transmission** and wait 4 seconds. | Phone pill turns **Stale**. | “The app never shows an old reading as live.” |
 | Click **Start transmitting**. | Phone back to **Live**; sequence continues. | “It recovers on the next frame, with no gap invented.” |
+| On the phone, tap **Play all unseen recordings**. | “Real recording: person 12”, the dataset label beside the CNN estimate. | “These are real people the model has never seen, streaming to my phone now. The label comes from the dataset and is only shown for comparison.” |
 | Optional: **Diagnostics → Take the link down**, then **Restore the link**. | *Missing sequence numbers* rises by the frames lost. | “Python notices that frames never arrived.” |
 | Optional: **Diagnostics → Open it in the Firebase console**. | The same `frame_id` in Firestore. | “Here is the exact document my phone just drew.” |
 
