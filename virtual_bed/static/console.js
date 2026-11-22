@@ -283,6 +283,21 @@ $("turn").addEventListener("change", () => { sliderActive = false; });
 $("centre").addEventListener("click", () => sceneOp({ op: "centre" }));
 $("getUp").addEventListener("click", () => sceneOp({ op: "get_up" }));
 $("transmit").addEventListener("click", toggleTransmit);
+$("resetAll").addEventListener("click", async () => {
+  if (!confirm("Reset everything? This empties the bed and deletes this session's stored frames, history and phone receipts. Frame numbers restart at 0.")) return;
+  const btn = $("resetAll");
+  btn.disabled = true;
+  btn.textContent = "Resetting";
+  try {
+    await post("/api/reset", {});
+    lastFrameId = null;
+  } catch (e) {
+    $("txError").textContent = e.message;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Reset everything";
+  }
+});
 function toggleTransmit() {
   if (!live) return;
   post("/api/transmit", { action: live.link.streaming ? "pause" : "start" })
@@ -437,7 +452,9 @@ function renderControls() {
     ? `Sending frame ${L.pending ?? L.next_seq} next. ${L.sent} of ${L.cap} sent in this run.`
     : `Paused. The next frame will be number ${L.pending ?? L.next_seq}.`;
   const r = live.remote;
-  const fromPhone = r && live.server_ms - r.at_ms < 8000
+  const fromPhone = r && r.action === "reset" && live.server_ms - r.at_ms < 15000
+    ? `Reset by ${r.device}: ${r.deleted} stored records deleted. The next frame is number 0.`
+    : r && live.server_ms - r.at_ms < 8000
     ? `${r.device} asked to ${r.action === "source"
       ? (r.mode === "recordings" ? `play person ${r.subject}, ${POSTURE[r.posture].toLowerCase()}` : "use the virtual bed")
       : r.action}.`

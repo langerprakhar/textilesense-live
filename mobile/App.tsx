@@ -131,7 +131,12 @@ export default function App() {
       (snap) => {
         setOnline(!snap.metadata.fromCache);
         const next = snap.data() as Frame | undefined;
-        if (next && next.frame_id !== lastId) {
+        if (!next) {
+          // The session was reset: clear the screen instead of keeping old data.
+          lastId = "";
+          setFrame(undefined);
+          setLag(null);
+        } else if (next.frame_id !== lastId) {
           lastId = next.frame_id;
           const t = Date.now();
           setArrival(t);
@@ -229,7 +234,7 @@ export default function App() {
 
 // ---------- Stream controls ----------
 type ControlRequest = {
-  action: "start" | "pause" | "source";
+  action: "start" | "pause" | "source" | "reset";
   mode?: "bed" | "recordings";
   subject?: 11 | 12 | 13;
   posture?: "back" | "left" | "right";
@@ -252,6 +257,7 @@ function Controls({ frame, live, send }: { frame?: Frame; live: boolean; send: (
   const [busy, setBusy] = useState("");
   const [note, setNote] = useState("");
   const [open, setOpen] = useState(false);
+  const [armed, setArmed] = useState(false);
   const rec = frame?.recording ? frame.recording.replace("S", "").split("-") : null;
   const curPerson = rec ? Number(rec[0]) : 12;
   const curPosture = rec ? POSITION_TO_POSTURE[rec[1]] : "back";
@@ -292,6 +298,23 @@ function Controls({ frame, live, send }: { frame?: Frame; live: boolean; send: (
       <View style={s.ctlRow}>
         <Btn label={live ? "Streaming" : "Play"} req={{ action: "start" }} on={live} />
         <Btn label="Pause" req={{ action: "pause" }} />
+        <Pressable
+          accessibilityRole="button"
+          disabled={!!busy}
+          onPress={() => {
+            if (armed) {
+              setArmed(false);
+              run("Reset", { action: "reset" });
+            } else {
+              setArmed(true);
+              setNote("Tap Reset again within 4 seconds to clear everything and start from frame 0.");
+              setTimeout(() => setArmed(false), 4000);
+            }
+          }}
+          style={[s.ctl, armed && { backgroundColor: C.error, borderColor: C.error }]}
+        >
+          <Text style={[s.ctlText, armed && s.ctlTextOn]}>{armed ? "Confirm" : "Reset"}</Text>
+        </Pressable>
       </View>
       <View style={s.ctlRow}>
         <Btn

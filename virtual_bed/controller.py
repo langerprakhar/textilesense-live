@@ -443,6 +443,8 @@ def watch_controls():
 
     def changed(docs, changes, read_time):
         for change in changes:
+            if change.type.name == "REMOVED":
+                continue  # a reset deletes requests; deletion is not a request
             data = change.document.to_dict() or {}
             stamp = data.get("requested_at")
             if stamp is None or stamp.timestamp() * 1000 < STARTED_MS:
@@ -465,6 +467,9 @@ def watch_controls():
                         playback.row = FIRST_ROW
                     link.pending = None
                 apply_transmit("start")
+            elif action == "reset":
+                threading.Thread(target=reset_all, args=(data.get("device", "a phone"),), daemon=True).start()
+                continue
             remote.update(
                 key=key,
                 action=action,
@@ -478,8 +483,36 @@ def watch_controls():
     return session_ref.collection("controls").on_snapshot(changed)
 
 
+def reset_all(by="the console"):
+    """Empty the bed and delete this session's stored frames, history,
+    phone receipts and control requests, so every screen starts from nothing.
+    The session document (device and viewers) is kept."""
+    link.streaming = False
+    link.drop = False
+    time.sleep(1.2)  # let a frame already on its way finish before deleting
+    with lock:
+        scene.mat, scene.person, scene.posture = None, None, "back"
+        scene.version += 1
+        playback.mode, playback.auto, playback.played = "bed", False, 0
+        playback.subject, playback.posture, playback.row = 12, "back", FIRST_ROW
+        link.pending, link.seq, link.sent, link.attempts = None, 0, 0, 0
+        link.dropped, link.timeline, link.stages = [], [], {}
+        link.error, link.note, link.document = "", "", None
+    batch, count = db.batch(), 0
+    for group in ("state", "events", "viewers", "controls"):
+        for ref in session_ref.collection(group).list_documents():
+            batch.delete(ref)
+            count += 1
+    batch.commit()
+    receipts.clear()
+    remote.clear()
+    remote.update(action="reset", device=by, deleted=count, at_ms=time.time_ns() // 1000000)
+    return count
+
+
 def watch_receipts():
     def changed(docs, changes, read_time):
+        receipts.clear()  # rebuild, so deleted receipts disappear too
         for d in docs:
             data = d.to_dict() or {}
             stamp = data.get("rendered_at")
@@ -622,6 +655,12 @@ def change_source(op: SourceOp, request: Request):
 class TransmitOp(BaseModel):
     model_config = ConfigDict(extra="forbid")
     action: Literal["start", "pause", "drop_link", "restore_link"]
+
+
+@app.post("/api/reset")
+def reset(request: Request):
+    same_origin(request)
+    return {"deleted": reset_all()}
 
 
 @app.post("/api/transmit")

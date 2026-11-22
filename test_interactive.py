@@ -189,6 +189,7 @@ def test_phone_control_requests_are_rule_checked(session):
 
     assert commit(token, uid, fields()) == 200
     assert commit(token, uid, fields("start", None, None, None)) == 200
+    assert commit(token, uid, fields("reset", None, None, None)) == 200
     assert commit(token, uid, fields(action="delete_everything")) == 403
     assert commit(token, uid, fields(subject=5)) == 403
     assert commit(token, uid, fields(), stamp=False) == 403  # must carry server time
