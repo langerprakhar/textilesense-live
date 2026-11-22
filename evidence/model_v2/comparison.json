@@ -1,0 +1,87 @@
+{
+ "test_subjects": [
+  11,
+  12,
+  13
+ ],
+ "results": [
+  {
+   "case": "as recorded",
+   "frames": 841,
+   "pmat-flat-v1": 0.9893,
+   "pmat-flat-v2": 0.9917
+  },
+  {
+   "case": "4 rows (10 cm) across",
+   "frames": 841,
+   "pmat-flat-v1": 0.9227,
+   "pmat-flat-v2": 0.9917
+  },
+  {
+   "case": "-4 rows (10 cm) across",
+   "frames": 841,
+   "pmat-flat-v1": 0.9893,
+   "pmat-flat-v2": 0.9893
+  },
+  {
+   "case": "8 rows (19 cm) across",
+   "frames": 841,
+   "pmat-flat-v1": 0.2937,
+   "pmat-flat-v2": 0.9905
+  },
+  {
+   "case": "-8 rows (19 cm) across",
+   "frames": 841,
+   "pmat-flat-v1": 0.4649,
+   "pmat-flat-v2": 0.9881
+  },
+  {
+   "case": "4 columns (12 cm) toward feet",
+   "frames": 841,
+   "pmat-flat-v1": 0.8419,
+   "pmat-flat-v2": 0.9905
+  },
+  {
+   "case": "-4 columns (12 cm) toward head",
+   "frames": 841,
+   "pmat-flat-v1": 0.7693,
+   "pmat-flat-v2": 0.9881
+  },
+  {
+   "case": "turned 10\u00b0",
+   "frames": 841,
+   "pmat-flat-v1": 0.981,
+   "pmat-flat-v2": 0.9905
+  },
+  {
+   "case": "turned -10\u00b0",
+   "frames": 841,
+   "pmat-flat-v1": 0.9881,
+   "pmat-flat-v2": 0.9929
+  },
+  {
+   "case": "turned 20\u00b0",
+   "frames": 841,
+   "pmat-flat-v1": 0.6564,
+   "pmat-flat-v2": 0.9881
+  },
+  {
+   "case": "turned -20\u00b0",
+   "frames": 841,
+   "pmat-flat-v1": 0.9061,
+   "pmat-flat-v2": 0.9917
+  },
+  {
+   "case": "head to foot (180\u00b0)",
+   "frames": 841,
+   "pmat-flat-v1": 0.1712,
+   "pmat-flat-v2": 0.9905
+  },
+  {
+   "case": "turned 15\u00b0 and moved 6 rows",
+   "frames": 841,
+   "pmat-flat-v1": 0.5398,
+   "pmat-flat-v2": 0.9881
+  }
+ ]
+}

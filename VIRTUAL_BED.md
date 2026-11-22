@@ -58,7 +58,7 @@ The phone's **Stream controls** card has **Play**, **Pause**, **Play all unseen 
 | Drag **Person** onto the mat, then click **Centre on mat**. | Heatmap under the body; CNN says *On back*; phone matches. | “The pressure is calculated from how the body rests on an elastic mattress. The CNN sees only these numbers.” |
 | Drag the body slowly sideways, then toward the head and foot. | The heatmap follows continuously; grey contact appears beside the mat. | “Grey is real contact that the mat cannot measure. Only the sensing area produces readings.” |
 | Click **Right side**, then **Left side**. | The body rolls in place; the knees come forward; the estimate follows. | “Rolling is separate from moving. My setting is stored for comparison, but the model never sees it.” |
-| Move the body about 10 cm off centre, or turn it 20°. | The yellow box explains why the estimate may now differ. | “The CNN was trained on centred people. Real recordings shifted the same way fool it too, and I report that rather than hide it.” |
+| Move the body 15 cm off centre, turn it 20°, or turn it head-to-foot. | The estimate holds. | “My first model failed here. I retrained it on the same real recordings, moved and turned, and now it holds. I never trained it on the simulator.” |
 | Click **Get up**. | Zeros return; phone shows *No load*. | “Fresh empty-bed readings keep arriving.” |
 | Click **Pause transmission** and wait 4 seconds. | Phone pill turns **Stale**. | “The app never shows an old reading as live.” |
 | Click **Start transmitting**. | Phone back to **Live**; sequence continues. | “It recovers on the next frame, with no gap invented.” |
@@ -86,13 +86,23 @@ Keyboard shortcuts for smooth recording: arrow keys move 1 cm (Shift moves 5 cm)
 - The API never reads `simulator.posture_selected`. A test sends identical grids labelled “right” and “left” and gets bit-identical scores.
 - Python attaches data-only warnings: `load_at_mat_edge` (more than 2% of load in the outermost ring), `small_contact_area` and `above_model_cap`.
 
-**Unsupported or outside the model's training:** a mat turned on the bed (not offered), a body turned more than about 5°, shifted more than about 6 cm sideways, or partly off the mat, mid-roll frames, empty beds, sitting, other body sizes, and anything clinical. The console's yellow box lists which of these applies to the current placement.
+**Unsupported or outside the model's training:** a mat turned on the bed (not offered), a body turned between 25° and 155°, moved more than 24 cm across or 17 cm along the mat, or more than 10% off it, mid-roll frames, empty beds, sitting, other body sizes, and anything clinical. The console's yellow box lists which of these applies to the current placement.
 
 ## Results, reported separately
 
 **Simulator correctness: 19/19 unit checks and 11/11 live checks.** Body weight is conserved on the mat (75 kg ± 3%), during a roll and at any turn. A 1 cm move changes the frame smoothly, and a 10 cm move shifts the centroid by 10 cm in rows or columns. Off-mat load gives zeros. Partial coverage shrinks steadily as the body slides off, and measured load matches true load on the mat within the dead-band loss. Left and right postures are mirror images. Empty readings are exact zeros. [test_simulator.py](test_simulator.py)
 
-**Model behaviour: 9/9 recorded live, with known limits.** Centred and aligned, the saved CNN labels all three simulated postures correctly: on back 88–89%, left side 98–99%, right side 99%. It was trained without shift or rotation augmentation. Moving the body about 10 cm sideways, turning it 10–20°, or pushing it partly off the mat can change its answer. Shifting real held-out recordings by 8 rows (19 cm) causes the same failures, so this is a property of the model, not of the simulator. Its 98.9% held-out accuracy applies to recorded frames, not to simulated ones. [Sweep](evidence/interactive/model-behavior.json)
+**Model behaviour: CNN v2, with known limits.** The first model (v1, [train.py](train.py)) learned only from people lying where the PmatData participants lay. Moved 19 cm or turned head-to-foot, it got 17–47% of real unseen frames right. v2 ([train_v2.py](train_v2.py)) uses the same network, data and subject splits, but every training frame is randomly moved (up to 24 cm across and 17 cm along), turned (up to 25°) or reversed head-to-foot. It never sees simulated frames. A variant that also mirrored left and right scored lower on the validation subjects and was rejected.
+
+| Held-out people 11–13, real frames | v1 | v2 |
+|---|---|---|
+| As recorded | 98.9% | 99.2% |
+| Moved 19 cm across | 29–47% | 98.8–99.1% |
+| Moved 12 cm toward head or foot | 77–84% | 98.8–99.1% |
+| Turned 20° | 66–91% | 98.8–99.2% |
+| Head to foot | 17% | 99.1% |
+
+On the simulator, which neither model trained on, v2 gets 65 of 75 placements right against v1's 52. Its remaining weak spots: a left-side body lying exactly in the centre of the mat is read as “on back” (57%), though moved 6 cm either way it is right; turns near 90°; and mid-roll frames. Before this comparison, the simulator's bony-prominence curvatures were refitted to real-data pressure statistics ([calibration](evidence/model_v2/body-calibration.json)). That fit used no model outputs. [Comparison](evidence/model_v2/comparison.json) · [Training log](evidence/model_v2/train.json) · [v2 sweep](evidence/interactive/model-behavior.json) · [v1 sweep](evidence/model_v2/sweep-v1.json)
 
 **Transport: 6/6 local checks, 5/5 API checks, and verified on a physical iPhone.** Pause stops frames, and the app marks the last one stale. Resume continues the sequence and flags the first frame as resumed. A link outage is counted exactly as missing frames. Every stored score recomputes from its stored grid. On 21 November 2026, an iPhone 17 Pro Max (iOS 26.6.2, Expo Go) on hosted Firebase reported drawing frames `virtual-bed/27` to `68`. It was at most one frame behind, its CNN result changed in step with each action, it showed Stale when paused, and it recovered. [test_interactive.py](test_interactive.py) · [iPhone run](evidence/interactive/physical-phone.json)
 

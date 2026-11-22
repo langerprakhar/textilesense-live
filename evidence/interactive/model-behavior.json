@@ -1,5 +1,6 @@
 {
- "summary": "Centred and aligned, the CNN labels all three simulated postures correctly (On back 89%, Left side 98%, Right side 99%). It was trained without shift or rotation augmentation, so moving the body about 10 cm sideways, turning it 10\u201320\u00b0, or pushing part of it off the mat can change its answer. Shifting real recordings shows the same sensitivity, so this is a property of the model, not of the simulator. Green: matches the simulated posture (for real frames, at least 90% of frames correct).",
+ "model": "pmat-flat-v2",
+ "summary": "Model pmat-flat-v2. Centred and aligned: On back \u2192 On back 100%, Left side \u2192 On back 57%, Right side \u2192 Right side 81%. Simulated placements correct: 65 of 75. Real held-out recordings moved 10\u201319 cm sideways: 100\u2013100% of frames correct. Green matches the simulated posture (for real frames, at least 90% correct).",
  "groups": [
   {
    "title": "On back: moved across the bed (+ is toward the bed's right side)",
@@ -7,101 +8,101 @@
     {
      "label": "-30 cm",
      "posture": "back",
-     "prediction": "Right",
-     "score": 0.953,
-     "agreement": 0.0,
-     "correct": false,
-     "coverage": 0.8199
+     "prediction": "Supine",
+     "score": 0.99,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.8157
     },
     {
      "label": "-20 cm",
      "posture": "back",
-     "prediction": "Right",
-     "score": 0.998,
-     "agreement": 0.0,
-     "correct": false,
-     "coverage": 0.9443
+     "prediction": "Supine",
+     "score": 0.99,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9425
     },
     {
      "label": "-10 cm",
      "posture": "back",
-     "prediction": "Right",
-     "score": 0.957,
-     "agreement": 0.0,
-     "correct": false,
-     "coverage": 0.9915
+     "prediction": "Supine",
+     "score": 0.999,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9886
     },
     {
      "label": "-6 cm",
      "posture": "back",
-     "prediction": "Right",
-     "score": 0.674,
-     "agreement": 0.0,
-     "correct": false,
-     "coverage": 0.9915
+     "prediction": "Supine",
+     "score": 1.0,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9919
     },
     {
      "label": "-3 cm",
      "posture": "back",
      "prediction": "Supine",
-     "score": 0.818,
+     "score": 0.999,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.9903
+     "coverage": 0.9908
     },
     {
      "label": "+0 cm",
      "posture": "back",
      "prediction": "Supine",
-     "score": 0.887,
+     "score": 1.0,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.9906
+     "coverage": 0.9877
     },
     {
      "label": "+3 cm",
      "posture": "back",
      "prediction": "Supine",
-     "score": 0.849,
+     "score": 1.0,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.9902
+     "coverage": 0.9907
     },
     {
      "label": "+6 cm",
      "posture": "back",
      "prediction": "Supine",
-     "score": 0.886,
+     "score": 1.0,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.9915
+     "coverage": 0.9919
     },
     {
      "label": "+10 cm",
      "posture": "back",
      "prediction": "Supine",
-     "score": 0.922,
+     "score": 0.999,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.9915
+     "coverage": 0.9886
     },
     {
      "label": "+20 cm",
      "posture": "back",
      "prediction": "Supine",
-     "score": 0.914,
+     "score": 0.962,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.9443
+     "coverage": 0.9425
     },
     {
      "label": "+30 cm",
      "posture": "back",
      "prediction": "Supine",
-     "score": 0.988,
+     "score": 0.963,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.8199
+     "coverage": 0.8158
     }
    ]
   },
@@ -111,101 +112,101 @@
     {
      "label": "-30 cm",
      "posture": "left",
-     "prediction": "Right",
-     "score": 0.951,
-     "agreement": 0.0,
-     "correct": false,
-     "coverage": 0.9938
+     "prediction": "Left",
+     "score": 0.977,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9832
     },
     {
      "label": "-20 cm",
      "posture": "left",
-     "prediction": "Right",
-     "score": 0.848,
-     "agreement": 0.0,
-     "correct": false,
-     "coverage": 0.9866
+     "prediction": "Left",
+     "score": 1.0,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9847
     },
     {
      "label": "-10 cm",
      "posture": "left",
      "prediction": "Left",
-     "score": 0.998,
+     "score": 0.995,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.994
+     "coverage": 0.9846
     },
     {
      "label": "-6 cm",
      "posture": "left",
      "prediction": "Left",
-     "score": 0.999,
+     "score": 0.85,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.994
+     "coverage": 0.9938
     },
     {
      "label": "-3 cm",
      "posture": "left",
      "prediction": "Left",
-     "score": 0.996,
+     "score": 0.792,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.9921
+     "coverage": 0.9875
     },
     {
      "label": "+0 cm",
      "posture": "left",
-     "prediction": "Left",
-     "score": 0.985,
-     "agreement": 1.0,
-     "correct": true,
-     "coverage": 0.9866
+     "prediction": "Supine",
+     "score": 0.568,
+     "agreement": 0.4,
+     "correct": false,
+     "coverage": 0.9847
     },
     {
      "label": "+3 cm",
      "posture": "left",
-     "prediction": "Left",
-     "score": 0.91,
-     "agreement": 1.0,
-     "correct": true,
-     "coverage": 0.9903
+     "prediction": "Supine",
+     "score": 0.868,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.9858
     },
     {
      "label": "+6 cm",
      "posture": "left",
      "prediction": "Left",
-     "score": 0.602,
+     "score": 0.709,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.994
+     "coverage": 0.9846
     },
     {
      "label": "+10 cm",
      "posture": "left",
-     "prediction": "Supine",
-     "score": 0.719,
-     "agreement": 0.0,
-     "correct": false,
-     "coverage": 0.994
+     "prediction": "Left",
+     "score": 0.98,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9932
     },
     {
      "label": "+20 cm",
      "posture": "left",
-     "prediction": "Supine",
-     "score": 0.855,
-     "agreement": 0.0,
-     "correct": false,
-     "coverage": 0.8585
+     "prediction": "Left",
+     "score": 0.995,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.8571
     },
     {
      "label": "+30 cm",
      "posture": "left",
-     "prediction": "Supine",
-     "score": 0.983,
-     "agreement": 0.0,
-     "correct": false,
-     "coverage": 0.6687
+     "prediction": "Left",
+     "score": 0.552,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.6618
     }
    ]
   },
@@ -215,101 +216,101 @@
     {
      "label": "-30 cm",
      "posture": "right",
-     "prediction": "Right",
-     "score": 0.952,
-     "agreement": 1.0,
-     "correct": true,
-     "coverage": 0.6669
+     "prediction": "Supine",
+     "score": 1.0,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.671
     },
     {
      "label": "-20 cm",
      "posture": "right",
-     "prediction": "Right",
-     "score": 0.513,
-     "agreement": 0.6,
-     "correct": true,
-     "coverage": 0.8569
+     "prediction": "Supine",
+     "score": 0.791,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.8571
     },
     {
      "label": "-10 cm",
      "posture": "right",
      "prediction": "Right",
-     "score": 0.798,
+     "score": 0.944,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.9922
+     "coverage": 0.9932
     },
     {
      "label": "-6 cm",
      "posture": "right",
      "prediction": "Right",
-     "score": 0.967,
+     "score": 0.94,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.9922
+     "coverage": 0.9846
     },
     {
      "label": "-3 cm",
      "posture": "right",
      "prediction": "Right",
-     "score": 0.987,
+     "score": 0.968,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.9886
+     "coverage": 0.9858
     },
     {
      "label": "+0 cm",
      "posture": "right",
      "prediction": "Right",
-     "score": 0.994,
+     "score": 0.811,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.985
+     "coverage": 0.9847
     },
     {
      "label": "+3 cm",
      "posture": "right",
      "prediction": "Right",
-     "score": 0.998,
-     "agreement": 1.0,
-     "correct": true,
-     "coverage": 0.9904
-    },
-    {
-     "label": "+6 cm",
-     "posture": "right",
-     "prediction": "Right",
-     "score": 0.999,
-     "agreement": 1.0,
-     "correct": true,
-     "coverage": 0.9922
-    },
-    {
-     "label": "+10 cm",
-     "posture": "right",
-     "prediction": "Right",
-     "score": 0.998,
-     "agreement": 1.0,
-     "correct": true,
-     "coverage": 0.9922
-    },
-    {
-     "label": "+20 cm",
-     "posture": "right",
-     "prediction": "Right",
-     "score": 0.565,
+     "score": 0.72,
      "agreement": 1.0,
      "correct": true,
      "coverage": 0.9875
     },
     {
+     "label": "+6 cm",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.983,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9938
+    },
+    {
+     "label": "+10 cm",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.978,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9846
+    },
+    {
+     "label": "+20 cm",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.955,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9847
+    },
+    {
      "label": "+30 cm",
      "posture": "right",
-     "prediction": "Supine",
-     "score": 0.991,
-     "agreement": 0.0,
-     "correct": false,
-     "coverage": 0.992
+     "prediction": "Right",
+     "score": 0.653,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9746
     }
    ]
   },
@@ -319,72 +320,72 @@
     {
      "label": "-10 cm",
      "posture": "back",
-     "prediction": "Right",
-     "score": 0.783,
-     "agreement": 0.0,
-     "correct": false,
-     "coverage": 0.9819
+     "prediction": "Supine",
+     "score": 1.0,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9761
     },
     {
      "label": "-5 cm",
      "posture": "back",
      "prediction": "Supine",
-     "score": 0.657,
+     "score": 1.0,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.9908
+     "coverage": 0.987
     },
     {
      "label": "+0 cm",
      "posture": "back",
      "prediction": "Supine",
-     "score": 0.887,
+     "score": 1.0,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.9906
+     "coverage": 0.9877
     },
     {
      "label": "+5 cm",
      "posture": "back",
      "prediction": "Supine",
-     "score": 0.941,
+     "score": 1.0,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.988
+     "coverage": 0.9813
     },
     {
      "label": "+10 cm",
      "posture": "back",
      "prediction": "Supine",
-     "score": 0.966,
+     "score": 1.0,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.964
+     "coverage": 0.9636
     },
     {
      "label": "turned -20\u00b0",
      "posture": "back",
-     "prediction": "Right",
-     "score": 0.791,
-     "agreement": 0.0,
-     "correct": false,
-     "coverage": 0.9688
+     "prediction": "Supine",
+     "score": 1.0,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9668
     },
     {
      "label": "turned -10\u00b0",
      "posture": "back",
-     "prediction": "Right",
-     "score": 0.819,
-     "agreement": 0.0,
-     "correct": false,
-     "coverage": 0.9909
+     "prediction": "Supine",
+     "score": 1.0,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9913
     },
     {
      "label": "turned -5\u00b0",
      "posture": "back",
      "prediction": "Supine",
-     "score": 0.551,
-     "agreement": 0.6,
+     "score": 1.0,
+     "agreement": 1.0,
      "correct": true,
      "coverage": 0.9909
     },
@@ -392,7 +393,7 @@
      "label": "turned +5\u00b0",
      "posture": "back",
      "prediction": "Supine",
-     "score": 0.727,
+     "score": 1.0,
      "agreement": 1.0,
      "correct": true,
      "coverage": 0.9909
@@ -400,47 +401,47 @@
     {
      "label": "turned +10\u00b0",
      "posture": "back",
-     "prediction": "Right",
-     "score": 0.611,
-     "agreement": 0.0,
-     "correct": false,
-     "coverage": 0.9909
+     "prediction": "Supine",
+     "score": 1.0,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9913
     },
     {
      "label": "turned +20\u00b0",
      "posture": "back",
-     "prediction": "Right",
-     "score": 0.898,
-     "agreement": 0.0,
-     "correct": false,
-     "coverage": 0.9687
+     "prediction": "Supine",
+     "score": 0.999,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9667
     },
     {
      "label": "turned +45\u00b0",
      "posture": "back",
-     "prediction": "Right",
-     "score": 0.759,
-     "agreement": 0.0,
-     "correct": false,
-     "coverage": 0.6695
+     "prediction": "Supine",
+     "score": 0.59,
+     "agreement": 0.8,
+     "correct": true,
+     "coverage": 0.6672
     },
     {
      "label": "turned +90\u00b0",
      "posture": "back",
-     "prediction": "Supine",
-     "score": 0.986,
-     "agreement": 1.0,
-     "correct": true,
-     "coverage": 0.4854
+     "prediction": "Left",
+     "score": 0.939,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.4915
     },
     {
      "label": "turned +180\u00b0",
      "posture": "back",
-     "prediction": "Right",
-     "score": 0.913,
-     "agreement": 0.0,
-     "correct": false,
-     "coverage": 0.9755
+     "prediction": "Supine",
+     "score": 0.999,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9716
     }
    ]
   },
@@ -451,127 +452,127 @@
      "label": "-10 cm",
      "posture": "left",
      "prediction": "Left",
-     "score": 0.999,
+     "score": 0.915,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.979
+     "coverage": 0.9768
     },
     {
      "label": "-5 cm",
      "posture": "left",
      "prediction": "Left",
-     "score": 0.996,
+     "score": 0.661,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.9862
+     "coverage": 0.9832
     },
     {
      "label": "+0 cm",
      "posture": "left",
-     "prediction": "Left",
-     "score": 0.985,
-     "agreement": 1.0,
-     "correct": true,
-     "coverage": 0.9866
+     "prediction": "Supine",
+     "score": 0.568,
+     "agreement": 0.4,
+     "correct": false,
+     "coverage": 0.9847
     },
     {
      "label": "+5 cm",
      "posture": "left",
-     "prediction": "Left",
-     "score": 0.941,
-     "agreement": 1.0,
-     "correct": true,
-     "coverage": 0.9873
+     "prediction": "Supine",
+     "score": 0.592,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.988
     },
     {
      "label": "+10 cm",
      "posture": "left",
      "prediction": "Left",
-     "score": 0.78,
+     "score": 0.617,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.9814
+     "coverage": 0.9807
     },
     {
      "label": "turned -20\u00b0",
      "posture": "left",
      "prediction": "Left",
-     "score": 0.961,
+     "score": 0.992,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.931
+     "coverage": 0.9278
     },
     {
      "label": "turned -10\u00b0",
      "posture": "left",
      "prediction": "Left",
-     "score": 1.0,
+     "score": 0.899,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.9919
+     "coverage": 0.9798
     },
     {
      "label": "turned -5\u00b0",
      "posture": "left",
      "prediction": "Left",
-     "score": 0.998,
+     "score": 0.557,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.9919
+     "coverage": 0.9863
     },
     {
      "label": "turned +5\u00b0",
      "posture": "left",
-     "prediction": "Left",
-     "score": 0.946,
-     "agreement": 1.0,
-     "correct": true,
-     "coverage": 0.9904
+     "prediction": "Supine",
+     "score": 0.617,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.9861
     },
     {
      "label": "turned +10\u00b0",
      "posture": "left",
      "prediction": "Left",
-     "score": 0.954,
+     "score": 0.912,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.9912
+     "coverage": 0.982
     },
     {
      "label": "turned +20\u00b0",
      "posture": "left",
      "prediction": "Left",
-     "score": 0.851,
+     "score": 0.999,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.9897
+     "coverage": 0.9842
     },
     {
      "label": "turned +45\u00b0",
      "posture": "left",
-     "prediction": "Right",
-     "score": 0.984,
-     "agreement": 0.0,
-     "correct": false,
-     "coverage": 0.6667
+     "prediction": "Left",
+     "score": 0.873,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.6671
     },
     {
      "label": "turned +90\u00b0",
      "posture": "left",
-     "prediction": "Right",
-     "score": 0.658,
-     "agreement": 0.0,
-     "correct": false,
-     "coverage": 0.505
+     "prediction": "Left",
+     "score": 0.868,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.4972
     },
     {
      "label": "turned +180\u00b0",
      "posture": "left",
-     "prediction": "Right",
-     "score": 0.999,
-     "agreement": 0.0,
-     "correct": false,
-     "coverage": 0.9865
+     "prediction": "Left",
+     "score": 0.819,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9806
     }
    ]
   },
@@ -582,127 +583,127 @@
      "label": "-10 cm",
      "posture": "right",
      "prediction": "Right",
-     "score": 1.0,
+     "score": 0.972,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.9774
+     "coverage": 0.9769
     },
     {
      "label": "-5 cm",
      "posture": "right",
      "prediction": "Right",
-     "score": 0.998,
+     "score": 0.855,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.9846
+     "coverage": 0.9832
     },
     {
      "label": "+0 cm",
      "posture": "right",
      "prediction": "Right",
-     "score": 0.994,
+     "score": 0.811,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.985
+     "coverage": 0.9847
     },
     {
      "label": "+5 cm",
      "posture": "right",
      "prediction": "Right",
-     "score": 0.981,
-     "agreement": 1.0,
-     "correct": true,
-     "coverage": 0.9857
-    },
-    {
-     "label": "+10 cm",
-     "posture": "right",
-     "prediction": "Right",
-     "score": 0.938,
-     "agreement": 1.0,
-     "correct": true,
-     "coverage": 0.9798
-    },
-    {
-     "label": "turned -20\u00b0",
-     "posture": "right",
-     "prediction": "Right",
-     "score": 0.996,
+     "score": 0.749,
      "agreement": 1.0,
      "correct": true,
      "coverage": 0.988
     },
     {
+     "label": "+10 cm",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.785,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9807
+    },
+    {
+     "label": "turned -20\u00b0",
+     "posture": "right",
+     "prediction": "Right",
+     "score": 0.994,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.9842
+    },
+    {
      "label": "turned -10\u00b0",
      "posture": "right",
      "prediction": "Right",
-     "score": 0.998,
+     "score": 0.997,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.9895
+     "coverage": 0.982
     },
     {
      "label": "turned -5\u00b0",
      "posture": "right",
      "prediction": "Right",
-     "score": 0.994,
+     "score": 0.98,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.9887
+     "coverage": 0.9861
     },
     {
      "label": "turned +5\u00b0",
      "posture": "right",
      "prediction": "Right",
-     "score": 0.999,
+     "score": 0.563,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.9902
+     "coverage": 0.9863
     },
     {
      "label": "turned +10\u00b0",
      "posture": "right",
      "prediction": "Right",
-     "score": 1.0,
+     "score": 0.777,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.9901
+     "coverage": 0.9798
     },
     {
      "label": "turned +20\u00b0",
      "posture": "right",
      "prediction": "Right",
-     "score": 0.992,
+     "score": 0.766,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.9293
+     "coverage": 0.9279
     },
     {
      "label": "turned +45\u00b0",
      "posture": "right",
-     "prediction": "Supine",
-     "score": 0.952,
-     "agreement": 0.0,
-     "correct": false,
-     "coverage": 0.6269
+     "prediction": "Right",
+     "score": 0.999,
+     "agreement": 1.0,
+     "correct": true,
+     "coverage": 0.6329
     },
     {
      "label": "turned +90\u00b0",
      "posture": "right",
-     "prediction": "Supine",
-     "score": 0.994,
+     "prediction": "Left",
+     "score": 1.0,
      "agreement": 0.0,
      "correct": false,
-     "coverage": 0.502
+     "coverage": 0.4971
     },
     {
      "label": "turned +180\u00b0",
      "posture": "right",
-     "prediction": "Left",
-     "score": 0.825,
+     "prediction": "Supine",
+     "score": 0.532,
      "agreement": 0.0,
      "correct": false,
-     "coverage": 0.9849
+     "coverage": 0.9806
     }
    ]
   },
@@ -713,64 +714,64 @@
      "label": "roll 0.0",
      "posture": "right",
      "prediction": "Supine",
-     "score": 0.887,
+     "score": 1.0,
      "agreement": 0.0,
      "correct": true,
-     "coverage": 0.9906
+     "coverage": 0.9877
     },
     {
      "label": "roll 0.2",
      "posture": "right",
      "prediction": "Supine",
-     "score": 0.775,
+     "score": 1.0,
      "agreement": 0.0,
      "correct": true,
-     "coverage": 0.99
+     "coverage": 0.9874
     },
     {
      "label": "roll 0.4",
      "posture": "right",
      "prediction": "Supine",
-     "score": 0.539,
-     "agreement": 0.2,
+     "score": 0.999,
+     "agreement": 0.0,
      "correct": true,
-     "coverage": 0.9886
+     "coverage": 0.9867
     },
     {
      "label": "roll 0.5",
      "posture": "right",
-     "prediction": "Right",
-     "score": 0.647,
-     "agreement": 1.0,
-     "correct": true,
-     "coverage": 0.9878
+     "prediction": "Supine",
+     "score": 0.999,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.9862
     },
     {
      "label": "roll 0.6",
      "posture": "right",
-     "prediction": "Right",
-     "score": 0.844,
-     "agreement": 1.0,
-     "correct": true,
-     "coverage": 0.9869
+     "prediction": "Supine",
+     "score": 0.992,
+     "agreement": 0.0,
+     "correct": false,
+     "coverage": 0.9858
     },
     {
      "label": "roll 0.8",
      "posture": "right",
      "prediction": "Right",
-     "score": 0.994,
+     "score": 0.72,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.9856
+     "coverage": 0.985
     },
     {
      "label": "roll 1.0",
      "posture": "right",
      "prediction": "Right",
-     "score": 0.994,
+     "score": 0.811,
      "agreement": 1.0,
      "correct": true,
-     "coverage": 0.985
+     "coverage": 0.9847
     }
    ]
   },
@@ -798,20 +799,20 @@
     {
      "label": "On back -10 cm",
      "prediction": "Supine",
-     "score": 0.769,
-     "correct": false
+     "score": 1.0,
+     "correct": true
     },
     {
      "label": "On back -19 cm",
-     "prediction": null,
-     "score": 0.0,
-     "correct": false
+     "prediction": "Supine",
+     "score": 1.0,
+     "correct": true
     },
     {
      "label": "Right side +19 cm",
-     "prediction": null,
-     "score": 0.261,
-     "correct": false
+     "prediction": "Right",
+     "score": 1.0,
+     "correct": true
     },
     {
      "label": "Right side +10 cm",
@@ -839,9 +840,9 @@
     },
     {
      "label": "Left side +19 cm",
-     "prediction": null,
-     "score": 0.138,
-     "correct": false
+     "prediction": "Left",
+     "score": 1.0,
+     "correct": true
     },
     {
      "label": "Left side +10 cm",
@@ -863,9 +864,9 @@
     },
     {
      "label": "Left side -19 cm",
-     "prediction": null,
-     "score": 0.0,
-     "correct": false
+     "prediction": "Left",
+     "score": 1.0,
+     "correct": true
     }
    ]
   }
@@ -897,21 +898,21 @@
    "shift_rows": 4,
    "shift_cm": -9.6,
    "frames": 26,
-   "accuracy": 0.769
+   "accuracy": 1.0
   },
   {
    "posture": "back",
    "shift_rows": 8,
    "shift_cm": -19.2,
    "frames": 26,
-   "accuracy": 0.0
+   "accuracy": 1.0
   },
   {
    "posture": "right",
    "shift_rows": -8,
    "shift_cm": 19.2,
    "frames": 23,
-   "accuracy": 0.261
+   "accuracy": 1.0
   },
   {
    "posture": "right",
@@ -946,7 +947,7 @@
    "shift_rows": -8,
    "shift_cm": 19.2,
    "frames": 29,
-   "accuracy": 0.138
+   "accuracy": 1.0
   },
   {
    "posture": "left",
@@ -974,7 +975,7 @@
    "shift_rows": 8,
    "shift_cm": -19.2,
    "frames": 29,
-   "accuracy": 0.0
+   "accuracy": 1.0
   }
  ]
 }

@@ -8,7 +8,7 @@ Person movement → virtual sensor readings → Python validation → CNN infere
 
 A second source, switchable live from the laptop or the phone, streams **real recordings of three people the CNN never trained on**, with the dataset's label shown beside the model's estimate.
 
-**Verified on a physical iPhone** (Expo Go, hosted Firebase) on 21 November 2026, alongside 19 simulator checks, 7 API and security-rule checks, and a 26-step browser acceptance run. Pressures are simulated, and the CNN's known limits are measured and shown in the app. This is a monitoring prototype, not a clinical tool.
+**Verified on a physical iPhone** (Expo Go, hosted Firebase) on 21 November 2026, alongside 19 simulator checks, 7 API and security-rule checks, and a 26-step browser acceptance run. Pressures are simulated. The CNN is version 2, retrained so it still recognises posture when the body is moved or turned (98.8–99.3% on unseen people, against v1's 17–99%), and its remaining limits are measured and shown in the app. This is a monitoring prototype, not a clinical tool.
 
 [Interactive bed guide and demo script](VIRTUAL_BED.md) · [Phone setup with Firebase console steps](PHONE.md) · [Console walkthrough video](evidence/interactive/acceptance-console.webm) · [Phase-one replay demo](evidence/live_test/demonstration.mp4) · [Interview questions](QUESTIONS.md)
 

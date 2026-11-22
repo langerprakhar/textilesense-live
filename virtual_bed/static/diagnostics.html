@@ -103,16 +103,16 @@
   <section class="card span6">
     <h2>Model card</h2>
     <table><tbody>
-      <tr><th>Model</th><td>pmat-flat-v1, PostureCNN (2 convolution layers, 3 classes)</td></tr>
-      <tr><th>Trained on</th><td>PhysioNet PmatData Experiment I, flat-bed positions, subjects 1–8; validation subjects 9–10</td></tr>
-      <tr><th>Held-out test</th><td>Subjects 11–13: accuracy 98.9%, macro F1 0.989 (recorded frames, not simulated)</td></tr>
+      <tr><th>Model</th><td>pmat-flat-v2, PostureCNN (2 convolution layers, 3 classes). Replaces v1.</td></tr>
+      <tr><th>Trained on</th><td>PhysioNet PmatData Experiment I, subjects 1–8, each frame randomly moved up to 24 cm across and 17 cm along the mat, turned up to 25°, or turned head-to-foot. No simulated frames. Chosen on validation subjects 9–10.</td></tr>
+      <tr><th>Held-out test</th><td>Subjects 11–13: accuracy 99.2%, macro F1 0.992 as recorded; 98.8–99.3% when the same frames are moved or turned (v1: 17–99%)</td></tr>
       <tr><th>Outputs</th><td>Softmax scores for back, right side, left side. Scores are not calibrated probabilities.</td></tr>
-      <tr><th>Not supported</th><td>Empty beds, a turned or partly covered body, other mats or mattresses, sitting, and anything clinical. It does not assess pressure-injury risk.</td></tr>
+      <tr><th>Not supported</th><td>Empty beds, a body mostly off the mat, turns between 25° and 155°, mid-roll frames, other mats or mattresses, sitting, and anything clinical. It does not assess pressure-injury risk.</td></tr>
     </tbody></table>
   </section>
 
   <section class="card span12">
-    <h2>How the CNN behaves on simulated frames</h2>
+    <h2>How CNN v2 behaves on simulated frames</h2>
     <p class="small" id="sweepNote">Run <b>python -m proof.model_behavior</b> to generate this sweep.</p>
     <div id="sweep"></div>
   </section>

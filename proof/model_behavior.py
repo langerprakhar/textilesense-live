@@ -21,9 +21,9 @@ ROLL = {"back": 0.0, "right": 1.0, "left": -1.0}
 NAMES = {"back": "On back", "right": "Right side", "left": "Left side"}
 
 
-def main():
+def main(model_path="model_v2.pt", out=OUT):
     torch.set_num_threads(1)
-    ck = torch.load("model.pt", map_location="cpu", weights_only=True)
+    ck = torch.load(model_path, map_location="cpu", weights_only=True)
     net = PostureCNN().eval()
     net.load_state_dict(ck["weights"])
     labels = ck["config"]["labels"]
@@ -118,17 +118,18 @@ def main():
         )
     )
     centred = [c for g in groups[:3] for c in g["cases"] if c["label"] == "+0 cm"]
+    placements = [c for g in groups[:6] for c in g["cases"]]
+    shifted = [r for r in real if r["shift_rows"] != 0]
     summary = (
-        "Centred and aligned, the CNN labels all three simulated postures correctly "
-        f"({', '.join(f'{NAMES[c['posture']]} {c['score'] * 100:.0f}%' for c in centred)}). "
-        "It was trained without shift or rotation augmentation, so moving the body "
-        "about 10 cm sideways, turning it 10–20°, or pushing part of it off the mat "
-        "can change its answer. Shifting real recordings shows the same sensitivity, "
-        "so this is a property of the model, not of the simulator. Green: matches the "
-        "simulated posture (for real frames, at least 90% of frames correct)."
+        f"Model {ck['config']['version']}. Centred and aligned: "
+        f"{', '.join(f'{NAMES[c['posture']]} → {NAMES.get({'Supine': 'back', 'Right': 'right', 'Left': 'left'}.get(c['prediction']), 'no load')} {c['score'] * 100:.0f}%' for c in centred)}. "
+        f"Simulated placements correct: {sum(c['correct'] for c in placements)} of {len(placements)}. "
+        f"Real held-out recordings moved 10–19 cm sideways: {min(r['accuracy'] for r in shifted) * 100:.0f}–"
+        f"{max(r['accuracy'] for r in shifted) * 100:.0f}% of frames correct. "
+        "Green matches the simulated posture (for real frames, at least 90% correct)."
     )
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(dict(summary=summary, groups=groups, real_shift=real), indent=1))
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(dict(model=ck["config"]["version"], summary=summary, groups=groups, real_shift=real), indent=1))
     print(summary)
     for g in groups:
         ok = sum(c["correct"] for c in g["cases"])
@@ -136,4 +137,10 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model", default="model_v2.pt")
+    parser.add_argument("--out", type=Path, default=OUT)
+    a = parser.parse_args()
+    main(a.model, a.out)

@@ -120,7 +120,7 @@ token = os.environ["TEXTILE_TOKEN"]
 if len(token) < 24:
     raise RuntimeError("Set a random ingestion token of at least 24 characters")
 checkpoint = torch.load(
-    os.environ.get("TEXTILE_MODEL", "model.pt"), map_location="cpu", weights_only=True
+    os.environ.get("TEXTILE_MODEL", "model_v2.pt"), map_location="cpu", weights_only=True
 )
 cfg = checkpoint["config"]
 net = PostureCNN().eval()

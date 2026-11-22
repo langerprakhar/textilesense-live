@@ -698,9 +698,9 @@ function Delivery({ frame, lag, online, now, arrival }: { frame?: Frame; lag: nu
 // ---------- Model ----------
 function ModelCard({ onSignOut, email }: { onSignOut: () => void; email: string }) {
   const rows: [string, string][] = [
-    ["Model", "pmat-flat-v1, a small convolutional network (PostureCNN)"],
-    ["Learned from", "PhysioNet PmatData, real pressure-mat recordings of 8 adults"],
-    ["Held-out test", "98.9% accuracy on 3 unseen adults (recorded frames)"],
+    ["Model", "pmat-flat-v2, a small convolutional network (PostureCNN)"],
+    ["Learned from", "Real pressure-mat recordings of 8 adults, each randomly moved, turned or reversed head-to-foot while training"],
+    ["Held-out test", "99.2% accuracy on 3 unseen adults, and 98.8–99.3% when those recordings are moved or turned"],
     ["Input", "The complete 32 × 64 grid only. Values clipped at 100 mmHg and log-scaled."],
     ["Output", "Scores for back, right side and left side. Not calibrated probabilities."],
   ];
@@ -719,7 +719,8 @@ function ModelCard({ onSignOut, email }: { onSignOut: () => void; email: string 
         <Text style={s.h2}>Limits</Text>
         {[
           "The pressures here are simulated, in mmHg, from a body contact model. Treating the training data's raw counts as 0.1 mmHg is an assumption.",
-          "The CNN never saw a shifted, turned or partly covered body. Moving the person about 10 cm sideways or turning them can change its answer, on real recordings too.",
+          "Version 1 failed when a body was moved about 10 cm or turned. Version 2 was retrained with moved and turned examples and holds up to 24 cm and 25°, and head-to-foot.",
+          "It still struggles with a body mostly off the mat, turns near 90°, and, in the simulator, a left-side body lying exactly in the centre.",
           "Mid-roll frames and empty beds are outside what it learned. An all-zero frame is reported as no load without running the model.",
           "This is a monitoring prototype. It does not diagnose anything or predict pressure injuries.",
         ].map((t) => (

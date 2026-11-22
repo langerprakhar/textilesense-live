@@ -162,29 +162,31 @@ def scene_json(mat, person, posture):
 
 
 def envelope(mat, person, truth):
-    """Is the scene inside the conditions the CNN was trained and checked on?"""
+    """Is the scene inside the conditions CNN v2 was trained and checked on?
+
+    v2 trained on real recordings moved up to 24 cm across and 17 cm along the
+    mat, turned up to 25 degrees, and turned head-to-foot.
+    """
     if mat is None:
         return dict(ok=False, reasons=["No mat on the bed, so there is no reading."])
     if person is None:
         return dict(ok=True, reasons=["Empty mat. The model is not run on zero load."])
     reasons = []
     cov = truth.get("coverage") or 0
-    if cov < 0.97:
+    if cov < 0.9:
         reasons.append(f"{(1 - cov) * 100:.0f}% of body load is off the sensing area.")
     turn = (person.theta + 180) % 360 - 180
-    if abs(turn) > 5:
-        reasons.append(f"Body turned {abs(turn):.0f}° from the mat's long axis.")
-    cx = mat.x + MAT_W / 2
-    cy = mat.y + MAT_L / 2
-    off_x = person.x - cx
+    from_axis = min(abs(turn), 180 - abs(turn))  # head-to-foot was trained too
+    if from_axis > 25:
+        reasons.append(f"Body turned {abs(turn):.0f}°; training covered up to 25° either way, and head-to-foot.")
+    off_x = person.x - (mat.x + MAT_W / 2)
     off_y = person.y - (mat.y + 0.89)
-    if abs(off_x) > 0.06:
-        reasons.append(f"Pelvis {abs(off_x) * 100:.0f} cm from the mat's centre line.")
-    if abs(off_y) > 0.08:
-        reasons.append(f"Pelvis {abs(off_y) * 100:.0f} cm from the usual hip position.")
+    if abs(off_x) > 0.24:
+        reasons.append(f"Pelvis {abs(off_x) * 100:.0f} cm from the mat's centre line; training covered up to 24 cm.")
+    if abs(off_y) > 0.17 and abs(turn) <= 90:
+        reasons.append(f"Pelvis {abs(off_y) * 100:.0f} cm from the usual hip position; training covered up to 17 cm.")
     if 0.05 < abs(person.roll) < 0.95:
         reasons.append("Mid-roll. The CNN only learned settled postures.")
-    del cy
     return dict(ok=not reasons, reasons=reasons)
 
 
